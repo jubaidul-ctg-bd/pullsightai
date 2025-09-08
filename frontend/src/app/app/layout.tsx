@@ -14,7 +14,9 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
                     className={`flex min-h-[calc(100vh-88px)] xl:pt-[88px] xl:pl-[260px] pt-[60px] max-w-screen overflow-hidden `}
                 >
                     <AppSideBar />
-                    <main className="flex-1 py-5 px-3 lg:px-5">{children}</main>
+                    <main className="flex-1 py-5 px-3 lg:px-5 max-w-full">
+                        {children}
+                    </main>
                 </div>
                 <PlanExpiredDialog />
             </AuthGuardClient>

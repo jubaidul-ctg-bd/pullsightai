@@ -18,8 +18,8 @@ export const columns: ColumnDef<PullRequest>[] = [
             cellClassName: "min-w-64 flex-1",
         },
         cell: ({ row }) => (
-            <div>
-                <span className="text-white mb-1 text-base">
+            <div className="2xl:max-w-xl xl:max-w-md lg:max-w-sm max-w-sm">
+                <span className="text-white mb-1 text-base text-wrap">
                     {row.getValue("prTitle")}
                 </span>
                 <div className="opacity-50">{row.original?.repo}</div>
