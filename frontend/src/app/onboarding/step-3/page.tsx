@@ -118,7 +118,7 @@ const Step3Page = () => {
                                 getKey={(item) => String(item.prNumber)}
                                 renderItem={(item) => (
                                     <div className="grid grid-cols-8 items-center flex-grow-1 gap-3 text-sm">
-                                        <div className="col-span-8 sm:hidden">
+                                        <div className="col-span-8 lg:hidden">
                                             <div className="flex gap-2">
                                                 <span className="truncate">
                                                     {item?.prTitle}
@@ -151,15 +151,15 @@ const Step3Page = () => {
                                                 </span>
                                             </div>
                                         </div>
-                                        <h4 className="col-span-3 hidden sm:block">
+                                        <h4 className="col-span-3 hidden lg:block">
                                             {item?.prTitle}
                                         </h4>
                                         <Avatar
-                                            className="col-span-2 hidden sm:flex"
+                                            className="col-span-2 hidden lg:flex"
                                             src={item?.prUserAvatar || ""}
                                             name={item?.prUser}
                                         />
-                                        <div className="col-span-1 text-center text-[var(--subtitle-500)] text-sm whitespace-nowrap hidden sm:block">
+                                        <div className="col-span-1 text-center text-[var(--subtitle-500)] text-sm whitespace-nowrap hidden lg:block">
                                             <Badge
                                                 variant={
                                                     item?.prState ===
@@ -172,10 +172,10 @@ const Step3Page = () => {
                                                 {item.prState}
                                             </Badge>
                                         </div>
-                                        <div className="col-span-1 text-right text-[var(--subtitle-500)] text-sm whitespace-nowrap hidden sm:block">
+                                        <div className="col-span-1 text-right text-[var(--subtitle-500)] text-sm whitespace-nowrap hidden lg:block">
                                             {formatDate(item.prCreatedAt || "")}
                                         </div>
-                                        <div className="col-span-1 text-right text-[var(--subtitle-500)] text-sm whitespace-nowrap hidden sm:block">
+                                        <div className="col-span-1 text-right text-[var(--subtitle-500)] text-sm whitespace-nowrap hidden lg:block">
                                             {formatDate(item.prUpdatedAt || "")}
                                         </div>
                                     </div>
