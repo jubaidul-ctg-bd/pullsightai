@@ -446,7 +446,7 @@ export class AnalysisService {
             modelInfo: postSummery.modelInfo,
             usageInfo: postSummery.usageInfo,
             estimatedCodeReviewEffort:
-                postSummery?.summary_info?.estimated_code_review_effort,
+                postSummery?.summary_info?.estimated_code_review_time,
             potentialIssueCount:
                 postSummery?.summary_info?.potential_issue_count
         }

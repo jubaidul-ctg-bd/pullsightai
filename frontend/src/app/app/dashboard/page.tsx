@@ -123,21 +123,21 @@ const DashboardPage = () => {
             </div>
             <div className="grid grid-cols-12 gap-5">
                 <PrAnalysisCard
-                    className="col-span-12 xl:col-span-4"
+                    className="col-span-12 lg:col-span-6 xl:col-span-4"
                     fromDate={fromDate || undefined}
                     toDate={toDate || undefined}
                     repo={repo || undefined}
                     breakdown={breakdown || undefined}
                 />
                 <IssueAnalysisCard
-                    className="col-span-12 xl:col-span-4"
+                    className="col-span-12 lg:col-span-6 xl:col-span-4"
                     fromDate={fromDate || undefined}
                     toDate={toDate || undefined}
                     repo={repo || undefined}
                     breakdown={breakdown || undefined}
                 />
                 <TimeMoneySavedCard
-                    className="col-span-12 xl:col-span-4"
+                    className="col-span-12 lg:col-span-12 xl:col-span-4"
                     fromDate={fromDate || undefined}
                     toDate={toDate || undefined}
                     repo={repo || undefined}

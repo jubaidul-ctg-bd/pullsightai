@@ -12,7 +12,7 @@ const OnboardingLayout = ({ children }: { children: ReactNode }) => {
         <AuthGuardServer>
             <AuthGuardClient>
                 <div
-                    className="pt-8 pb-20 md:py-14 min-h-screen bg-no-repeat bg-cover bg-center max-w-screen overflow-hidden"
+                    className="pt-8 md:pt-14 pb-30 min-h-screen bg-no-repeat bg-cover bg-center max-w-screen overflow-hidden"
                     style={{
                         backgroundImage: "url('/images/gradient-bg.svg')",
                     }}

@@ -87,7 +87,7 @@ const Step2Page = () => {
                             </Button>
                         </ContentCard.Header>
                         <ContentCard.Body
-                            className="xl:max-h-[calc(100vh-450px)]"
+                            className="lg:max-h-[calc(100vh-650px)] xl:max-h-[calc(100vh-450px)]"
                             hasError={!!error}
                             isLoading={isFetching}
                             errorLabel={

@@ -83,10 +83,10 @@ export class PullRequestAnalysis {
     })
     workspace?: Types.ObjectId
 
-    @Prop({ type: Number, default: null })
+    @Prop({ type: Number, default: 0 })
     estimatedCodeReviewEffort: number
 
-    @Prop({ type: Number, default: null })
+    @Prop({ type: Number, default: 0 })
     potentialIssueCount: number
 }
 

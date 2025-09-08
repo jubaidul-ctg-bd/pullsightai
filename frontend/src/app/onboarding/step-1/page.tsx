@@ -166,7 +166,7 @@ const Step1Page = () => {
                                 }
                                 getKey={(item) => String(item.id)}
                                 renderItem={(item) => (
-                                    <div className="grid grid-cols-5 items-center gap-4 flex-grow-1 text-sm">
+                                    <div className="grid grid-cols-4 items-center gap-4 flex-grow-1 text-sm">
                                         <h4 className="col-span-2">
                                             {item.name}
                                         </h4>
@@ -175,18 +175,18 @@ const Step1Page = () => {
                                             src={item.avatarUrl || ""}
                                             name={item.name}
                                         />
-                                        <div className="col-span-1 text-right text-[var(--subtitle-500)] text-sm whitespace-nowrap hidden md:block">
-                                            {humanizeDate(item.createdAt || "")}
-                                        </div>
+                                        {/* <div className="col-span-1 text-right text-[var(--subtitle-500)] text-sm whitespace-nowrap hidden md:block">
+                                            {humanizeDate(item.createdOn || "")}
+                                        </div> */}
                                     </div>
                                 )}
                                 renderHeader={() => (
-                                    <div className="ml-9 md:grid grid-cols-5 gap-4 py-2 px-4 text-[var(--subtitle-400)] text-xs hidden">
+                                    <div className="ml-9 md:grid grid-cols-4 gap-4 py-2 px-4 text-[var(--subtitle-400)] text-xs hidden">
                                         <div className="col-span-2">Title</div>
                                         <div className="col-span-2">Author</div>
-                                        <div className="col-span-1 text-right">
+                                        {/* <div className="col-span-1 text-right">
                                             Created at
-                                        </div>
+                                        </div> */}
                                     </div>
                                 )}
                                 isDisabled={(item) =>

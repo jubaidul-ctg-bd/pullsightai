@@ -55,7 +55,7 @@ const ActionFooter: FC<ActionFooterProps> = ({
     };
 
     return (
-        <div className="fixed left-0 right-0 bottom-6 w-full z-10">
+        <div className="fixed left-0 right-0 bottom-0 py-3 w-full z-10 bg-background">
             <div className="container flex items-center">
                 {backButtonText && onBackClick && (
                     <button

@@ -142,7 +142,7 @@ const SinglePlanCard: FC<{
     plan: Plan;
     seats: number;
     isSelected: boolean;
-}> = ({ className, plan, seats, isSelected }) => {
+}> = ({ className, plan, seats, isSelected: isCurrentPlan }) => {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [subscribingPlanId, setSubscribingPlanId] = useState<string | null>(
@@ -157,7 +157,8 @@ const SinglePlanCard: FC<{
 
     const handleSubscribe = async (plan: Plan, skipFreeCheck = false) => {
         // Handle subscription logic here
-        if (plan?.isFree && !skipFreeCheck) {
+        // if (plan?.isFree && !skipFreeCheck) {
+        if (!skipFreeCheck) {
             setIsOpen(true);
             return;
         }
@@ -205,14 +206,36 @@ const SinglePlanCard: FC<{
         selectedWorkspace?.currentPlan?.plan?._id,
     ]);
 
+    const remainingDays = getRemainingDays(
+        selectedWorkspace?.currentPlan?.periodEnd || ""
+    );
+    const isSameSelectedSeats =
+        selectedWorkspace?.currentPlan?.numOfSeat === seats;
+    const isSubscribedDisabled =
+        (remainingDays > 0 &&
+            isCurrentPlan &&
+            selectedWorkspace?.currentPlan?.isFree) ||
+        (isCurrentPlan &&
+            !selectedWorkspace?.currentPlan?.isFree &&
+            isSameSelectedSeats);
+
     return (
         <>
             <ConfirmDialog
                 open={isOpen}
                 onOpenChange={setIsOpen}
                 isLoading={isPending || isFetching}
-                title="Confirm Free Plan"
-                description="Are you sure you want to subscribe to this plan? All other members except workspace owner will be disabled."
+                title={
+                    plan?.isFree
+                        ? "Confirm Free Plan"
+                        : "Are you sure you want to update your plan?"
+                }
+                description={
+                    plan?.isFree
+                        ? "Are you sure you want to subscribe to this plan? All other members except workspace owner will be disabled."
+                        : "Your token & seat count will be updated based on the new plan & seats you've selected."
+                }
+                confirmVariant="default"
                 onConfirm={() => handleFreePlanSubscription(plan)}
             />
             <Card
@@ -232,7 +255,7 @@ const SinglePlanCard: FC<{
                     </Badge>
                 )}
 
-                <CardHeader className="pb-4 h-[200px]">
+                <CardHeader className="pb-4 h-[250px]">
                     <CardTitle className="text-xl">{plan.title}</CardTitle>
                     <p className="text-muted-foreground text-sm mb-8">
                         {plan.description}
@@ -244,22 +267,51 @@ const SinglePlanCard: FC<{
                             </span>
                         </div>
                     ) : (
-                        <div className="mt-auto flex items-center">
-                            <div className="flex-1">
-                                <span className="text-3xl font-semibold">
-                                    $
-                                </span>
-                                <span className="text-5xl font-bold">
-                                    {plan.pricePerDev}
-                                </span>
-                                <span className="text-lg font-semibold text-muted-foreground">
-                                    /dev
-                                </span>
+                        <>
+                            <div className="mt-auto flex items-center">
+                                <div className="flex-1 ">
+                                    <span className="text-3xl font-semibold">
+                                        $
+                                    </span>
+                                    <span className="text-5xl font-bold">
+                                        {plan.billingCycle == "yearly"
+                                            ? (plan.pricePerDev / 12).toFixed(2)
+                                            : plan.pricePerDev}
+                                    </span>
+                                    {/* {plan.billingCycle === "yearly" && (
+                                        <span className="text-md">
+                                            .
+                                            {Math.floor(
+                                                ((plan.pricePerDev / 12) % 1) *
+                                                    100
+                                            )}
+                                        </span>
+                                    )} */}
+                                    {!plan.isFree ? (
+                                        <div className="text-md font-semibold text-muted-foreground">
+                                            / dev per month
+                                        </div>
+                                    ) : (
+                                        <div className="text-md font-semibold text-muted-foreground">
+                                            / org
+                                        </div>
+                                    )}
+                                </div>
+                                {isCurrentPlan && (
+                                    <Badge className="bg-white">
+                                        Current Plan
+                                    </Badge>
+                                )}
                             </div>
-                            {isSelected && (
-                                <Badge className="bg-white">Current Plan</Badge>
+                            {!plan.isFree && (
+                                <span className="text-xs text-muted-foreground">
+                                    Billed{" "}
+                                    {plan.billingCycle === "monthly"
+                                        ? "Monthly"
+                                        : "Yearly"}
+                                </span>
                             )}
-                        </div>
+                        </>
                     )}
                 </CardHeader>
 
@@ -295,15 +347,7 @@ const SinglePlanCard: FC<{
                             className={`w-full font-semibold h-[56px]`}
                             size="lg"
                             onClick={() => handleSubscribe(plan)}
-                            disabled={
-                                getRemainingDays(
-                                    selectedWorkspace?.currentPlan?.periodEnd ||
-                                        ""
-                                ) < 0 &&
-                                isSelected &&
-                                selectedWorkspace?.currentPlan?.numOfSeat ==
-                                    seats
-                            }
+                            disabled={isSubscribedDisabled}
                             isLoading={
                                 isPending ||
                                 subscribingPlanId === plan._id ||
@@ -365,11 +409,11 @@ const PricingTable: FC<PricingTableProps> = ({
             ) : (
                 <div
                     className={cn(
-                        "grid grid-cols-1  gap-7 max-w-8xl mx-auto mb-20 justify-center",
-                        {
-                            "lg:grid-cols-3": plans?.length == 2,
-                            "lg:grid-cols-4": plans?.length != 2,
-                        }
+                        "flex flex-wrap xl:flex-nowrap gap-7 max-w-8xl mx-auto mb-20 justify-center"
+                        // {
+                        //     "lg:grid-cols-3": plans?.length == 2,
+                        //     "lg:grid-cols-4": plans?.length != 2,
+                        // }
                     )}
                 >
                     {plans?.map((plan: Plan, index) => {
@@ -378,6 +422,7 @@ const PricingTable: FC<PricingTableProps> = ({
                             plan._id;
                         return (
                             <SinglePlanCard
+                                className="min-w-[250px] max-w-[360px] flex-1"
                                 key={plan._id}
                                 plan={plan}
                                 seats={seats}

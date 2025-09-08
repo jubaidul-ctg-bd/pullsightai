@@ -58,10 +58,10 @@ const PrCodeAnalysis: FC<Props> = ({ analysisData, pullRequest }) => {
         : validComments.slice(0, 3);
 
     return (
-        <div className="bg-[var(--body-900)] rounded-xl text-gray-100 font-sans space-y-3">
+        <div className="rounded-xl text-gray-100 font-sans space-y-3">
             {/* PR Header */}
             <div className="bg-[var(--box-800)] rounded-xl p-4">
-                <div className="flex items-start gap-3">
+                <div className="flex flex-col lg:flex-row items-start gap-3">
                     <Avatar
                         src={pr?.prUserAvatar || ""}
                         name={pr?.prUser || ""}
@@ -116,7 +116,7 @@ const PrCodeAnalysis: FC<Props> = ({ analysisData, pullRequest }) => {
 
             {/* AI Analysis Summary */}
             <div className="bg-[var(--box-800)] rounded-xl p-4">
-                <div className="flex items-start gap-3">
+                <div className="flex flex-col lg:flex-row items-start gap-3">
                     <div className="w-12 h-12 flex-shrink-0 rounded-full  flex items-center justify-center">
                         <Image
                             src="/images/logo-icon.svg"
@@ -127,7 +127,7 @@ const PrCodeAnalysis: FC<Props> = ({ analysisData, pullRequest }) => {
                         />
                     </div>
 
-                    <div className="flex-1">
+                    <div className="flex-1 max-w-full">
                         <div className="flex items-center gap-2 mb-2">
                             <span className="font-semibold text-gray-200">
                                 PullSight AI
@@ -150,7 +150,7 @@ const PrCodeAnalysis: FC<Props> = ({ analysisData, pullRequest }) => {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-4 text-xs text-gray-400 divide-x divide-gray-700">
+                        <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 text-xs text-gray-400 divide-x divide-gray-700">
                             <span className="flex items-center gap-1 pr-4">
                                 <span className="mr-[2px]">⛔</span>
                                 {
@@ -223,7 +223,7 @@ const PrCodeAnalysis: FC<Props> = ({ analysisData, pullRequest }) => {
                             height={42}
                             className="flex-shrink-0"
                         />
-                        <div className="flex-1">
+                        <div className="flex-1 max-w-full flex flex-col lg:flex-row gap-y-2">
                             <Badge
                                 type="faded"
                                 className={cn(
@@ -238,7 +238,7 @@ const PrCodeAnalysis: FC<Props> = ({ analysisData, pullRequest }) => {
                                     {comment.severity}
                                 </span>
                             </Badge>
-                            <span className="text-gray-400 text-sm">
+                            <span className="text-gray-400 text-sm break-words">
                                 {comment.filePath}:{comment.lineStart}
                                 {comment.lineEnd !== comment.lineStart &&
                                     `-${comment.lineEnd}`}
@@ -270,7 +270,7 @@ const PrCodeAnalysis: FC<Props> = ({ analysisData, pullRequest }) => {
                                                     key={index}
                                                     className="flex"
                                                 >
-                                                    <span className="text-gray-500 w-8 text-right pr-2 select-none font-mono">
+                                                    <span className="text-gray-500 w-8 text-right pr-2 select-none font-mono flex-shrink-0">
                                                         {lineNumber > 0
                                                             ? lineNumber
                                                             : ""}

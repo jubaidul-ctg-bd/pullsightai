@@ -1,6 +1,10 @@
+"use client";
+
+import { useUserQuery } from "@/api/queries/auth";
 import { useCancelPlanMutation } from "@/api/queries/subscription";
 import Badge from "@/components/reusable/Badge";
 import Button from "@/components/reusable/Button";
+import CircularProgress from "@/components/reusable/CircularProgress";
 import ConfirmDialog from "@/components/reusable/ConfirmDialog";
 import { CheckIcon } from "@/components/reusable/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,14 +14,29 @@ import { formatDate, getRemainingDays } from "@/lib/dayjs";
 import showToast from "@/lib/toast";
 import { numToHip } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
-import { AlertCircle, Calendar, CreditCard, Users, Zap } from "lucide-react";
+import {
+    AlertCircle,
+    Calendar,
+    CreditCard,
+    Loader,
+    Users,
+    Zap,
+} from "lucide-react";
 import Link from "next/link";
-import { FC, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { FC, useEffect, useState } from "react";
 
 const CurrentPlan = () => {
     const [showConfirm, setShowConfirm] = useState(false);
+    const [showProcessing, setShowProcessing] = useState(false);
     const { selectedWorkspace } = useAuthStore();
     const { mutateAsync: cancelPlan } = useCancelPlanMutation();
+
+    const { refetch, isFetching } = useUserQuery({
+        isEnabled: false,
+    });
+
+    const searchParams = useSearchParams();
 
     const activePlan = selectedWorkspace?.currentPlan;
     const isTrialPlan = activePlan?.plan?.isDefault;
@@ -29,6 +48,18 @@ const CurrentPlan = () => {
             showToast.success("Subscription cancelled successfully");
         });
     };
+
+    useEffect(() => {
+        const service = searchParams.get("service");
+        const paymentStatus = searchParams.get("paymentStatus");
+        if (paymentStatus == "paid") {
+            setShowProcessing(true);
+            setTimeout(async () => {
+                await refetch();
+                setShowProcessing(false);
+            }, 5000);
+        }
+    }, [searchParams]);
 
     return (
         <div className="space-y-6">
@@ -238,6 +269,12 @@ const CurrentPlan = () => {
                 confirmText="Cancel Subscription"
                 variant="destructive"
             />
+
+            {showProcessing && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-100">
+                    <Loader className="animate-spin" />
+                </div>
+            )}
         </div>
     );
 };

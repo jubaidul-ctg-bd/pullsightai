@@ -82,26 +82,26 @@ const Step4Page = () => {
                         </h3>
                         {data && data?.pullRequest && (
                             <>
-                                <div className="hidden md:grid grid-cols-6 py-3 text-[var(--subtitle-400)] text-sm font-medium">
-                                    <div className="col-span-2 pl-3">Title</div>
-                                    <div className="col-span-1 pl-1">
+                                <div className="hidden md:grid grid-cols-12 py-3 text-[var(--subtitle-400)] text-sm font-medium">
+                                    <div className="col-span-5 pl-3">Title</div>
+                                    <div className="col-span-2 pl-1">
                                         Author
                                     </div>
                                     <div className="col-span-1 text-center">
                                         Status
                                     </div>
-                                    <div className="col-span-1 text-right pr-3">
+                                    <div className="col-span-2 text-right pr-3">
                                         Created at
                                     </div>
-                                    <div className="col-span-1 text-right pr-4">
+                                    <div className="col-span-2 text-right pr-4">
                                         Updated at
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-6 items-center py-3 bg-[var(--box-800)] rounded-lg">
-                                    <div className="col-span-6 px-3 sm:hidden">
-                                        <div className="flex gap-2">
-                                            <span className="truncate">
+                                <div className="grid grid-cols-12 items-center py-3 bg-[var(--box-800)] rounded-lg gap-3">
+                                    <div className="col-span-12 px-3 sm:hidden">
+                                        <div className="flex gap-2 items-start">
+                                            <span className="truncate-2">
                                                 {data?.pullRequest?.prTitle}
                                             </span>
                                             <Badge
@@ -134,12 +134,12 @@ const Step4Page = () => {
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="col-span-2 hidden sm:block">
-                                        <span className="text-[var(--title-50)] text-base font-medium ml-3">
+                                    <div className="col-span-5 hidden sm:block px-3">
+                                        <span className="text-[var(--title-50)] text-base font-medium">
                                             {data?.pullRequest?.prTitle}
                                         </span>
                                     </div>
-                                    <div className="col-span-1 hidden sm:block">
+                                    <div className="col-span-2 hidden sm:block">
                                         <Avatar
                                             className=""
                                             src={
@@ -166,12 +166,12 @@ const Step4Page = () => {
                                             {data?.pullRequest?.prState}
                                         </Badge>
                                     </div>
-                                    <div className="col-span-1 text-right text-sm hidden sm:block">
+                                    <div className="col-span-2 text-right text-sm hidden sm:block">
                                         {formatDate(
                                             data?.pullRequest?.createdAt
                                         )}
                                     </div>
-                                    <div className="col-span-1 text-right text-sm pr-4 hidden sm:block">
+                                    <div className="col-span-2 text-right text-sm pr-4 hidden sm:block">
                                         {formatDate(
                                             data?.pullRequest?.updatedAt
                                         )}

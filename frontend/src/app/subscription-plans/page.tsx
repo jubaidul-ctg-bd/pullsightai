@@ -33,7 +33,9 @@ const PricingPlansPage = () => {
     const [billingInterval, setBillingInterval] = useState<
         "monthly" | "yearly"
     >("monthly");
-    const [seats, setSeats] = useState<number>(noOfActiveMembers);
+    const [seats, setSeats] = useState<number>(
+        selectedWorkspace?.currentPlan?.numOfSeat || noOfActiveMembers || 1
+    );
 
     const { data, isFetching } = useGetSubscriptionPlansQuery();
 

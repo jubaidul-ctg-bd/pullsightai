@@ -94,11 +94,19 @@ const MemberList = ({ onSelectionChange }: Props) => {
 
     return (
         <ContentCard className="mb-4">
-            <ContentCard.Header className="flex-wrap sm:flex-nowrap gap-y-4">
-                <h3 className="font-medium text-lg">
-                    Team members list{" "}
-                    <span className="text-muted">({members?.length})</span>
-                </h3>
+            <ContentCard.Header className="flex-wrap sm:flex-nowrap gap-y-4 gap-x-6">
+                <div>
+                    <h3 className="font-medium text-lg">
+                        Team members list{" "}
+                        <span className="text-muted">({members?.length})</span>
+                    </h3>
+
+                    <div className="text-neutral-400 text-sm">
+                        Invited team members would receive AI code reviews and
+                        would have access to the app. <br /> You can add or
+                        remove team members at any time
+                    </div>
+                </div>
                 <input
                     value={
                         (columnFilters.find((f) => f.id === "username")
@@ -147,9 +155,6 @@ const MemberList = ({ onSelectionChange }: Props) => {
                     columnFilters={columnFilters}
                     onColumnFiltersChange={setColumnFilters}
                 />
-                <div className="text-muted text-sm mt-3">
-                    You can add or remove team members at any time
-                </div>
             </ContentCard.Body>
         </ContentCard>
     );

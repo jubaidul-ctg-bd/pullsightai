@@ -155,7 +155,7 @@ const RepositoryList = ({ onSelectionChange }: Props) => {
                 />
             </ContentCard.Header>
             <ContentCard.Body
-                className="xl:max-h-[calc(100vh-650px)]"
+                className="lg:max-h-[600px] xl:max-h-[calc(100vh-650px)]"
                 hasError={!!error}
                 isLoading={isFetching}
                 errorLabel={

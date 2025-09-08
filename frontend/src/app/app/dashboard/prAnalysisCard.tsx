@@ -60,7 +60,7 @@ const PrAnalysisCard = ({
                     </div>
                 </div>
                 <ChartContainer
-                    className="border py-3 pr-3 rounded-xl flex-1"
+                    className="border py-3 pr-3 rounded-xl flex-1 max-h-[400px]"
                     config={{
                         total: {
                             label: "Total",

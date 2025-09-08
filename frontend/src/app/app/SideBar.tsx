@@ -24,7 +24,7 @@ const AppSideBar = () => {
     return (
         <>
             <header
-                className={`w-[260px] p-5 fixed xl:h-[calc(100vh-88px)] h-[calc(100vh-60px)] left-0 bottom-0 xl:top-[88px] top-[60px] bg-background border-r xl:border-r-0 overflow-y-auto transition-transform z-30 xl:translate-x-0 ${
+                className={`w-[260px] p-5 fixed xl:h-[calc(100vh-88px)] h-[calc(100vh-60px)] left-0 bottom-0 xl:top-[88px] top-[60px] bg-background border-r xl:border-r-0 overflow-y-auto transition-transform z-50 xl:translate-x-0 ${
                     isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >

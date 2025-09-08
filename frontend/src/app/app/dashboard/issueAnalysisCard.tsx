@@ -68,7 +68,7 @@ const IssueAnalysisCard = ({
                         </div>
                     ) : (
                         <ChartContainer
-                            className="w-full h-64 sm:h-72 md:h-80"
+                            className="w-full h-64 sm:h-72 md:h-80 max-h-[400px]"
                             config={{
                                 warning: {
                                     label: "Warning",

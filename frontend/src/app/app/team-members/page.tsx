@@ -8,8 +8,12 @@ import { useOrganizationMembersQuery } from "@/api/queries/member";
 import { useAuthStore } from "@/store/authStore";
 import ResponsiveTeamMemberList from "./ResponsiveTeamMemberList";
 import { TeamMember } from "@/types/user";
+import InviteMemberModal from "./InviteMemberModal";
+import Button from "@/components/reusable/Button";
+import { Plus } from "lucide-react";
 
 const TeamActivityPage = () => {
+    const [showInvite, setShowInvite] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
 
     const user = useAuthStore((s) => s.user);
@@ -35,8 +39,20 @@ const TeamActivityPage = () => {
     return (
         <div className="">
             {/* Header */}
-            <div className="flex items-center gap-2 mb-3">
-                <h2 className="text-2xl font-semibold">Team Members</h2>
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-2 mb-3">
+                <div>
+                    <h2 className="text-2xl font-semibold">Team Members</h2>
+                    <div className="text-neutral-400 text-sm">
+                        Invited team members would receive AI code reviews and
+                        would have access to the app.
+                    </div>
+                </div>
+                <Button variant="outline" onClick={() => setShowInvite(true)}>
+                    <div className="flex items-center">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Invite Members
+                    </div>
+                </Button>
             </div>
             {/* Table */}
             <ContentCard className="">
@@ -52,6 +68,7 @@ const TeamActivityPage = () => {
                     />
                 </ContentCard.Body>
             </ContentCard>
+            <InviteMemberModal open={showInvite} onOpenChange={setShowInvite} />
         </div>
     );
 };

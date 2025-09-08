@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { DatabaseService } from 'src/database/database.service'
+import { PaymentStatus } from 'src/database/enums/status.enum'
 import { Gateway } from 'src/database/enums/transaction.enum'
 import { CreatePaymentDto } from 'src/payments/dto/create-payment.dto'
 import { PaymentsService } from 'src/payments/payments.service'
@@ -38,9 +39,11 @@ export class StripeService {
 
     async createCheckoutSession(createPaymentDto: CreatePaymentDto) {
         const SUCCESS_URL =
-            this.configService.get<string>('CLIENT_URL') + '/app/subscription'
+            this.configService.get<string>('CLIENT_URL') +
+            `/app/subscription?service=${createPaymentDto.service}&paymentStatus=${PaymentStatus.PAID}`
         const CANCEL_URL =
-            this.configService.get<string>('CLIENT_URL') + '/app/subscription'
+            this.configService.get<string>('CLIENT_URL') +
+            `/app/subscription?service=${createPaymentDto.service}&paymentStatus=${PaymentStatus.CANCELLED}`
         const session = await this.stripe.checkout.sessions.create({
             mode: 'subscription',
             customer: createPaymentDto.customerId, // must exist in Stripe
@@ -72,9 +75,11 @@ export class StripeService {
 
     async createOneTimeCheckout(createPaymentDto: CreatePaymentDto) {
         const SUCCESS_URL =
-            this.configService.get<string>('CLIENT_URL') + '/app/subscription'
+            this.configService.get<string>('CLIENT_URL') +
+            `/app/subscription?service=${createPaymentDto.service}&paymentStatus=${PaymentStatus.PAID}`
         const CANCEL_URL =
-            this.configService.get<string>('CLIENT_URL') + '/app/subscription'
+            this.configService.get<string>('CLIENT_URL') +
+            `/app/subscription?service=${createPaymentDto.service}&paymentStatus=${PaymentStatus.CANCELLED}`
         const session = await this.stripe.checkout.sessions.create({
             mode: 'payment',
             customer: createPaymentDto.customerId,

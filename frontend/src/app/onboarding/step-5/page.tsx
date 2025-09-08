@@ -123,17 +123,17 @@ const Step5Page = () => {
 
                 {/* left column */}
                 <div className="col-span-12 xl:col-span-6">
-                    <RepositoryList
-                        onSelectionChange={(selectedRepos) =>
-                            setSelectedRepositories(selectedRepos)
+                    <MemberList
+                        onSelectionChange={(selectedMembers) =>
+                            setSelectedMembers(selectedMembers)
                         }
                     />
                 </div>
                 {/* Right column */}
                 <div className="col-span-12 xl:col-span-6">
-                    <MemberList
-                        onSelectionChange={(selectedMembers) =>
-                            setSelectedMembers(selectedMembers)
+                    <RepositoryList
+                        onSelectionChange={(selectedRepos) =>
+                            setSelectedRepositories(selectedRepos)
                         }
                     />
                 </div>
