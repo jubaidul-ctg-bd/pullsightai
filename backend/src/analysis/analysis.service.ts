@@ -220,6 +220,14 @@ export class AnalysisService {
                 owner: newPR.owner,
                 repo: newPR.repo
             })
+            if (!existingPR) {
+                const pullRequest = await this.dataService.pullRequests.create({
+                    ...pullRequestFormattedData.pullRequest
+                })
+                return pullRequest?.toObject()
+            }
+            console.log('existing pr', existingPR)
+            console.log('newPR', newPR)
             const prFiles = newPR.prFiles
                 .map((file) => {
                     if (!existingPR?.prFiles) return file // If no existing files, include all new files
@@ -252,13 +260,11 @@ export class AnalysisService {
                     return null
                 })
                 .filter((file) => file !== null) // Remove null entries
+
             const savedPullRequestFormattedData =
                 await this.dataService.pullRequests.findOneAndUpdate(
                     {
-                        provider: newPR.provider,
-                        prNumber: newPR.prNumber,
-                        owner: newPR.owner,
-                        repo: newPR.repo
+                        _id: existingPR._id
                     },
                     {
                         $set: {
@@ -293,6 +299,7 @@ export class AnalysisService {
         workspace: any,
         repository?: any
     ) {
+        console.log('Making analysis for PR event:', event)
         const savedPullRequestFormattedData =
             await this.getAndSavePullRequestFormattedData(
                 pullRequestFormattedData,
@@ -313,6 +320,7 @@ export class AnalysisService {
                 pullRequest: savedPullRequestFormattedData._id,
                 workspace
             })
+        console.log('Created pullRequestAnalysis:', pullRequestAnalysis)
         try {
             const requestBody = {
                 pullRequest: {

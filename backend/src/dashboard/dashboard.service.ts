@@ -283,61 +283,60 @@ export class DashboardService {
         }
 
         // Get all PR analyses with populated pull request data
-        // const prAnalyses = await this.dataService.pullRequestAnalysis
-        //     .find(analysisMatch)
-        //     .populate({
-        //         path: 'pullRequest',
-        //         populate: {
-        //             path: 'prFiles'
-        //         }
-        //     })
-        //     .exec()
-
-        const prAnalyses = await this.dataService.pullRequestAnalysis.findOne({
-            workspaceSlug: findWorkspace.slug
-        })
+        const prAnalyses = await this.dataService.pullRequestAnalysis
+            .find(analysisMatch)
+            .populate({
+                path: 'pullRequest',
+                populate: {
+                    path: 'prFiles'
+                }
+            })
+            .exec()
+        // const prAnalyses = await this.dataService.pullRequestAnalysis.findOne({
+        //     workspaceSlug: findWorkspace.slug
+        // })
 
         let totalTimeSaved = 0
         let totalLinesReviewed = 0
         const timeSeriesData: Map<string, number> = new Map()
 
-        // for (const analysis of prAnalyses) {
-        //     if (analysis.pullRequest) {
-        //         const pullRequest = analysis.pullRequest as any
+        for (const analysis of prAnalyses) {
+            if (analysis.pullRequest) {
+                const pullRequest = analysis.pullRequest as any
 
-        //         // Use total line counts from PR schema
-        //         const prTotalLineAddition = pullRequest.prTotalLineAddition || 0
-        //         const prTotalLineDeletion = pullRequest.prTotalLineDeletion || 0
+                // Use total line counts from PR schema
+                const prTotalLineAddition = pullRequest.prTotalLineAddition || 0
+                const prTotalLineDeletion = pullRequest.prTotalLineDeletion || 0
 
-        //         const timeInSecondToReviewPrLine = 30
-        //         const totalPrReviewTimeInSeconds =
-        //             (prTotalLineAddition + prTotalLineDeletion) *
-        //             timeInSecondToReviewPrLine
-        //         const totalPrReviewTimeInHour =
-        //             totalPrReviewTimeInSeconds / 3600
+                const timeInSecondToReviewPrLine = 30
+                const totalPrReviewTimeInSeconds =
+                    (prTotalLineAddition + prTotalLineDeletion) *
+                    timeInSecondToReviewPrLine
+                const totalPrReviewTimeInHour =
+                    totalPrReviewTimeInSeconds / 3600
 
-        //         totalTimeSaved += totalPrReviewTimeInHour
-        //         totalLinesReviewed += prTotalLineAddition + prTotalLineDeletion
+                totalTimeSaved += analysis.estimatedCodeReviewEffort
+                totalLinesReviewed += prTotalLineAddition + prTotalLineDeletion
 
-        //         // Group by time period for chart data
-        //         const breakdown =
-        //             timeAndMoneySaveCardFilterDto.breakdown || 'day'
-        //         const dateKey = this.formatDateByBreakdown(
-        //             (analysis as any).createdAt,
-        //             breakdown
-        //         )
+                // Group by time period for chart data
+                const breakdown =
+                    timeAndMoneySaveCardFilterDto.breakdown || 'day'
+                const dateKey = this.formatDateByBreakdown(
+                    (analysis as any).createdAt,
+                    breakdown
+                )
 
-        //         timeSeriesData.set(
-        //             dateKey,
-        //             (timeSeriesData.get(dateKey) || 0) + totalPrReviewTimeInHour
-        //         )
-        //     }
-        // }
+                timeSeriesData.set(
+                    dateKey,
+                    (timeSeriesData.get(dateKey) || 0) + totalPrReviewTimeInHour
+                )
+            }
+        }
 
         // Calculate money saved
-        totalTimeSaved = prAnalyses ? prAnalyses.estimatedCodeReviewEffort : 0
+        // totalTimeSaved = prAnalyses ? prAnalyses.estimatedCodeReviewEffort : 0
         // totalLinesReviewed = prAnalyses ? prAnalyses.totalLinesChanged : 0
-
+        totalTimeSaved = parseFloat((totalTimeSaved / 60).toFixed(2)) // Convert minutes to hours
         const totalMoneySaved = totalTimeSaved * hourlyRate
         const averageTimePerPR = 0
 
@@ -358,8 +357,8 @@ export class DashboardService {
 
         return {
             graphChart,
-            totalTimeSaved: Math.round(totalTimeSaved), // Hours, rounded to 2 decimal places
-            totalMoneySaved: Math.round(totalMoneySaved), // Currency, rounded to 2 decimal places
+            totalTimeSaved: totalTimeSaved.toFixed(2), // Hours, rounded to 2 decimal places
+            totalMoneySaved: totalMoneySaved.toFixed(2), // Currency, rounded to 2 decimal places
             averageTimePerPR: 0, // Hours, rounded to 2 decimal places
             totalLinesReviewed,
             totalPRsAnalyzed: 0,
