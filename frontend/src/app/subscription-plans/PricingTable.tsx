@@ -339,7 +339,7 @@ const SinglePlanCard: FC<{
                                 className={`w-full font-semibold h-[56px]`}
                                 size="lg"
                             >
-                                Subscribe
+                                Contact Sales
                             </Button>
                         </a>
                     ) : (

@@ -11,28 +11,28 @@ import Image from "next/image";
 const testimonials = [
     {
         id: 1,
-        quote: "PullSight gave us the speed and confidence we needed—without ever risking our IP. Our 150-person engineering team now ships 40% faster.",
-        author: "Sophia Kim",
-        avatar: "/images/avatars/1.png",
-        position: "Head of Engineering",
-        company: "TechCorp",
-    },
-    {
-        id: 2,
-        quote: "The AI-powered code reviews have significantly improved our code quality. We've reduced bugs by 60% since implementing PullSight.",
-        author: "Michael Chen",
+        quote: "Pullsight helps us keep code reviews moving without burning out senior engineers. That’s been a big win for us.",
+        author: "Mladen Grozev",
         avatar: "/images/avatars/2.png",
-        position: "Senior Developer",
-        company: "StartupX",
-    },
-    {
-        id: 3,
-        quote: "PullSight's privacy-first approach gave us the confidence to use AI for code review. SOC2 compliance was exactly what we needed.",
-        author: "Sarah Johnson",
-        avatar: "/images/avatars/1.png",
         position: "CTO",
-        company: "SecureApp Inc",
+        company: "GetHookd",
     },
+    // {
+    //     id: 2,
+    //     quote: "The AI-powered code reviews have significantly improved our code quality. We've reduced bugs by 60% since implementing PullSight.",
+    //     author: "Michael Chen",
+    //     avatar: "/images/avatars/2.png",
+    //     position: "Senior Developer",
+    //     company: "StartupX",
+    // },
+    // {
+    //     id: 3,
+    //     quote: "PullSight's privacy-first approach gave us the confidence to use AI for code review. SOC2 compliance was exactly what we needed.",
+    //     author: "Sarah Johnson",
+    //     avatar: "/images/avatars/1.png",
+    //     position: "CTO",
+    //     company: "SecureApp Inc",
+    // },
 ];
 
 const Testimonial = () => {

@@ -20,7 +20,8 @@ import { Fragment, use } from "react";
 
 const AppTopBar = () => {
     const pathName = usePathname();
-    const { user, workspaces, selectedWorkspace } = useAuthStore((s) => s);
+    const { user, workspaces, selectedWorkspace, myRoleInSelectedWorkspace } =
+        useAuthStore((s) => s);
     const { toggleSidebar, isSidebarOpen } = useAppStore();
 
     const {
@@ -89,7 +90,7 @@ const AppTopBar = () => {
     };
 
     return (
-        <div className="xl:h-[88px] h-[60px] flex justify-between items-center border-b gap-x-2 lg:gap-x-4 xl:px-5 pr-3 pl-1 fixed top-0 left-0 right-0 z-40 bg-background">
+        <div className="xl:h-[88px] h-[60px] flex items-center border-b gap-x-2 lg:gap-x-4 xl:px-5 pr-3 pl-1 fixed top-0 left-0 right-0 z-40 bg-background">
             {pathName !== ROUTE_CONSTANTS.APP_SUBSCRIPTION_PLANS && (
                 <Button
                     variant="ghost"
@@ -134,7 +135,7 @@ const AppTopBar = () => {
 
             <AdminGuard>
                 {isTrialPlan ? (
-                    <div className="text-sm text-gray-400 bg-yellow-400/20 rounded-xl py-1 xl:py-2 px-3 hidden lg:inline-flex items-center gap-5 mx-auto">
+                    <div className="text-sm text-gray-400 bg-yellow-400/20 rounded-xl py-1 xl:py-2 px-3 hidden lg:inline-flex items-center gap-5 ml-auto">
                         <CircularProgress
                             value={progressPercentage}
                             size={48}
@@ -200,10 +201,7 @@ const AppTopBar = () => {
                     <Button
                         variant="ghost"
                         className={cn(
-                            "justify-between bg-[var(--box-800)] flex items-center !h-auto !px-3 rounded-2xl gap-3 xl:gap-5 w-[150px] xl:w-[214px] ml-auto lg:ml-0",
-                            {
-                                "ml-auto": !isTrialPlan,
-                            }
+                            "justify-between bg-[var(--box-800)] flex items-center !h-auto !px-3 rounded-2xl gap-3 xl:gap-5 w-[150px] xl:w-[214px] ml-auto"
                         )}
                     >
                         <div className="text-left flex-shrink-0 min-w-0 flex-1">
