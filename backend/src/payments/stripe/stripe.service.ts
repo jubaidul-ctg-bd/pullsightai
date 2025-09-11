@@ -74,37 +74,78 @@ export class StripeService {
     }
 
     async createOneTimeCheckout(createPaymentDto: CreatePaymentDto) {
-        const SUCCESS_URL =
-            this.configService.get<string>('CLIENT_URL') +
-            `/app/subscription?service=${createPaymentDto.service}&paymentStatus=${PaymentStatus.PAID}`
-        const CANCEL_URL =
-            this.configService.get<string>('CLIENT_URL') +
-            `/app/subscription?service=${createPaymentDto.service}&paymentStatus=${PaymentStatus.CANCELLED}`
-        const session = await this.stripe.checkout.sessions.create({
-            mode: 'payment',
+        // 1. Get customer's saved card(s)
+        const paymentMethods = await this.stripe.paymentMethods.list({
+            customer: createPaymentDto.customerId
+        })
+
+        if (!paymentMethods.data.length) {
+            throw new Error('No saved card found for this customer.')
+        }
+
+        // Use the first saved card (or default if you manage that logic separately)
+        const defaultPaymentMethod = paymentMethods.data[0].id
+
+        // 2. Create a PaymentIntent to charge the saved card
+        const paymentIntent = await this.stripe.paymentIntents.create({
+            amount: createPaymentDto.price * 100,
+            currency: 'usd',
             customer: createPaymentDto.customerId,
-            line_items: [
-                {
-                    price: createPaymentDto.productId,
-                    quantity: 1
-                }
-            ],
-            success_url: SUCCESS_URL,
-            cancel_url: CANCEL_URL,
+            payment_method: defaultPaymentMethod,
+            description: `Purchase of token ${createPaymentDto.service} ${createPaymentDto.productTitle}`,
+            off_session: true,
+            confirm: true,
             metadata: {
                 serviceBookingId: createPaymentDto.serviceBookingId.toString(),
-                serviceBookingRef: createPaymentDto.serviceBookingRef
+                serviceBookingRef: createPaymentDto.serviceBookingRef,
+                productId: createPaymentDto.productId as string
             }
         })
+
+        if (paymentIntent.status != 'succeeded') {
+            throw new Error('Payment failed, please try again.')
+        }
         return {
-            url: session.url,
-            transactionId: session.id,
-            paymentStatus: session.payment_status,
-            storeAmount: Number(session.amount_total) / 100,
-            amount: Number(session.amount_total) / 100,
-            response: session
+            transactionId: paymentIntent.id,
+            paymentStatus: PaymentStatus.PAID,
+            storeAmount: Number(paymentIntent.amount) / 100,
+            amount: Number(paymentIntent.amount) / 100,
+            response: paymentIntent
         }
     }
+
+    // async createOneTimeCheckout(createPaymentDto: CreatePaymentDto) {
+    //     const SUCCESS_URL =
+    //         this.configService.get<string>('CLIENT_URL') +
+    //         `/app/subscription?service=${createPaymentDto.service}&paymentStatus=${PaymentStatus.PAID}`
+    //     const CANCEL_URL =
+    //         this.configService.get<string>('CLIENT_URL') +
+    //         `/app/subscription?service=${createPaymentDto.service}&paymentStatus=${PaymentStatus.CANCELLED}`
+    //     const session = await this.stripe.checkout.sessions.create({
+    //         mode: 'payment',
+    //         customer: createPaymentDto.customerId,
+    //         line_items: [
+    //             {
+    //                 price: createPaymentDto.productId,
+    //                 quantity: 1
+    //             }
+    //         ],
+    //         success_url: SUCCESS_URL,
+    //         cancel_url: CANCEL_URL,
+    //         metadata: {
+    //             serviceBookingId: createPaymentDto.serviceBookingId.toString(),
+    //             serviceBookingRef: createPaymentDto.serviceBookingRef
+    //         }
+    //     })
+    //     return {
+    //         url: session.url,
+    //         transactionId: session.id,
+    //         paymentStatus: session.payment_status,
+    //         storeAmount: Number(session.amount_total) / 100,
+    //         amount: Number(session.amount_total) / 100,
+    //         response: session
+    //     }
+    // }
 
     async handleWebhook(sig: string, body: any) {
         switch (body.type) {

@@ -546,10 +546,12 @@ export class DashboardService {
                     prNumber: '$pullRequest.prNumber',
                     prState: '$pullRequest.prState',
                     category: 1,
-                    // content: 1,
+                    content: 1,
                     filePath: 1,
                     lineStart: 1,
-                    lineEnd: 1
+                    lineEnd: 1,
+                    codeSnippet: 1,
+                    codeSnippetLineStart: 1
                 }
             },
             { $sort: { updated: -1 } },

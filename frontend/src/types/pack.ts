@@ -4,6 +4,7 @@ export interface Pack {
     description: string;
     price: number;
     token: number;
+    totalToken?: number;
     isActive: boolean;
     isPublic: boolean;
     createdAt: string;

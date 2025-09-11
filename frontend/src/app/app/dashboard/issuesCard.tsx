@@ -2,8 +2,11 @@ import { useDashboardIssuesQuery } from "@/api/queries/dashboard";
 import { useGetWorkspaceTeamMembersQuery } from "@/api/queries/workspace";
 import Avatar from "@/components/reusable/Avatar";
 import Badge from "@/components/reusable/Badge";
+import Button from "@/components/reusable/Button";
 import ContentCard from "@/components/reusable/ContentCard";
 import DataTable from "@/components/reusable/DataTable";
+import Dialog from "@/components/reusable/Dialog";
+import MdPreview from "@/components/reusable/MdPreview";
 import PrStateBadge from "@/components/reusable/PrStateBadge";
 import Select from "@/components/reusable/Select";
 import SeverityBadge from "@/components/reusable/SeverityBadge";
@@ -14,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { Issue } from "@/types/issue";
 import { TeamMember } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Info } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface Props {
@@ -22,6 +25,128 @@ interface Props {
     fromDate?: string;
     toDate?: string;
     repo?: string | null;
+}
+
+const IssueActionMenu = ({ issue }: { issue: Issue }) => {
+    const [showInfo, setShowInfo] = useState(false);
+    return (
+        <>
+            <Button className="bg-transparent text-gray-400 hover:bg-white/10 transition-colors size-5 items-center justify-center p-0" onClick={() => setShowInfo(true)}>
+                <Info className="w-auto h-3 inline-block" />
+            </Button>
+            <Dialog title="Issue Details" size="lg" description="" contentClassName="block" open={showInfo} onOpenChange={setShowInfo}>
+                <div className="max-w-full">
+                    {/* Header Section */}
+                    <div className="border-b border-gray-800 pb-4 mb-6">
+                        <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                                <h3 className="text-xl font-semibold text-white mb-2">{issue.category}</h3>
+                                <div className="flex items-center gap-2 mb-3">
+                                    <SeverityBadge severity={issue.severity} />
+                                    <PrStateBadge state={issue.prState} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-gray-900/50 rounded-lg p-3 mt-3">
+                            <span className="text-sm text-gray-400">File Path:</span>
+                            <p className="text-white font-mono text-sm break-all">{issue.filePath}</p>
+                        </div>
+                    </div>
+
+                    <div className="border rounded-xl p-4 border-gray-700">
+                        {issue.codeSnippet && (
+                            <div className="bg-gray-950 rounded border border-gray-700 p-3 mb-3">
+                                <pre className="text-xs overflow-x-auto">
+                                    {issue.codeSnippet
+                                        .trim()
+                                        .split("\n")
+                                        .map((line, index) => {
+                                            const lineNumber =
+                                                (issue.codeSnippetLineStart ??
+                                                    issue.lineStart) + index;
+                                            const isHighlighted =
+                                                lineNumber >=
+                                                    issue.lineStart &&
+                                                lineNumber <= issue.lineEnd;
+
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className="flex"
+                                                >
+                                                    <span className="text-gray-500 w-8 text-right pr-2 select-none font-mono flex-shrink-0">
+                                                        {lineNumber > 0
+                                                            ? lineNumber
+                                                            : ""}
+                                                    </span>
+                                                    <code
+                                                        className={`flex-1 px-2 ${
+                                                            isHighlighted
+                                                                ? issue.severity ===
+                                                                  "critical"
+                                                                    ? "bg-red-900/40 text-red-200 border-l-2 border-red-500"
+                                                                    : issue.severity ===
+                                                                      "warning"
+                                                                    ? "bg-yellow-900/40 text-yellow-200 border-l-2 border-yellow-500"
+                                                                    : "bg-blue-900/40 text-blue-200 border-l-2 border-blue-500"
+                                                                : "text-gray-300"
+                                                        }`}
+                                                    >
+                                                        {line}
+                                                    </code>
+                                                </div>
+                                            );
+                                        })}
+                                </pre>
+                            </div>
+                        )}
+                        <div className="text-gray-300 text-sm mb-3">
+                            <MdPreview content={issue.content} />
+                        </div>
+                    </div>
+
+                    {/* Pull Request Information */}
+                    <div className="mb-6">
+                        <h4 className="text-lg font-medium text-white mb-3">Pull Request Information</h4>
+                        <div className="bg-gray-900/30 rounded-lg p-4 space-y-3">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-gray-400">PR:</span>
+                                    <span className="text-white font-medium">#{issue.pr}</span>
+                                    <a 
+                                        href={issue.prUrl} 
+                                        target="_blank" 
+                                        className="text-blue-400 hover:text-blue-300 transition-colors"
+                                        title="View Pull Request"
+                                    >
+                                        <ExternalLink className="w-4 h-4" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <span className="text-gray-400">Author:</span>
+                                <div className="flex items-center gap-2">
+                                    <Avatar src={""} name={issue.prUser} className="w-6 h-6" />
+                                    <span className="text-white">{issue.prUser}</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <span className="text-gray-400">Repository:</span>
+                                <span className="text-white">{issue.repositorySlug}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center justify-end pt-4 border-t border-gray-800">
+                        <Button variant="secondary" onClick={() => setShowInfo(false)}>
+                            Close
+                        </Button>
+                    </div>
+                </div>
+            </Dialog>
+        </>
+    );
 }
 
 const columns: ColumnDef<Issue>[] = [
@@ -34,9 +159,12 @@ const columns: ColumnDef<Issue>[] = [
         },
         cell: ({ row }) => (
             <div>
-                <span className="text-white mb-1 text-base">
-                    {row.getValue("category")}
-                </span>
+                <div className="flex gap-2">
+                    <span className="text-white mb-1 text-base">
+                        {row.getValue("category")}
+                    </span>
+                    <IssueActionMenu issue={row.original} />
+                </div>
                 <div className="opacity-50 truncate">
                     {row.original?.filePath}
                 </div>

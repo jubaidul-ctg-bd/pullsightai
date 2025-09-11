@@ -17,4 +17,7 @@ export interface Issue {
     prNumber: string;
     prState: string;
     prUrl: string;
+    codeSnippet: string;
+    codeSnippetLineStart: number;
+    codeSnippetLineEnd: number;
 }

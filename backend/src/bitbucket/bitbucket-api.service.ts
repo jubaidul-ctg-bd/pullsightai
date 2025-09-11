@@ -214,7 +214,7 @@ export class BitbucketApiService {
             createdOn: repo.created_on,
             updatedOn: repo.updated_on,
             author: {
-                username: repo.owner?.username,
+                username: repo?.owner?.username || repo?.owner?.nickname,
                 avatarUrl: repo.owner?.links?.avatar?.href
             },
             private: repo.is_private,

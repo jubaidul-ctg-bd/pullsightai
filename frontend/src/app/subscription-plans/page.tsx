@@ -171,7 +171,23 @@ const PricingPlansPage = () => {
                     seats={seats}
                 />
 
-                <MoreToken />
+                <div
+                    className="max-w-8xl mx-auto mb-20 flex flex-col lg:flex-row justify-between items-center gap-6"
+                    id="more-tokens"
+                >
+                    <MoreToken />
+                    <div className="flex items-end flex-col">
+                        <h4 className="text-muted-foreground mb-2 text-sm">
+                            Payment Method:
+                        </h4>
+                        <Image
+                            src="/images/stripe.png"
+                            alt="stripe gateway"
+                            width={115}
+                            height={48}
+                        />
+                    </div>
+                </div>
 
                 {/* Trust & Social Proof Section */}
                 <div className="mx-auto max-w-8xl mb-28">

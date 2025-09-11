@@ -50,18 +50,19 @@ export class PaymentsService {
 
     async createOneTimePayment(createPaymentDto: CreatePaymentDto) {
         if (createPaymentDto.gateway == Gateway.STRIPE) {
-            const responseData =
+            const updateSubscriptionInvoice =
                 await this.stripeService.createOneTimeCheckout(createPaymentDto)
-            await this.dataServices.transactions.create({
+            const transaction = await this.dataServices.transactions.create({
                 ...createPaymentDto,
-                transactionId: responseData.transactionId,
-                paymentStatus: responseData.paymentStatus,
-                storeAmount: responseData.storeAmount,
-                amount: responseData.amount
+                transactionId: updateSubscriptionInvoice.transactionId,
+                paymentStatus: updateSubscriptionInvoice.paymentStatus,
+                storeAmount: updateSubscriptionInvoice.storeAmount,
+                amount: updateSubscriptionInvoice.amount
             })
-            return {
-                url: responseData.url,
-                transactionId: responseData.transactionId
+            if (transaction.service == Service.PLAN) {
+                await this.purchasePlanComplete(transaction)
+            } else if (transaction.service == Service.PACK) {
+                await this.purchasePackComplete(transaction)
             }
         } else {
             throw new BadGatewayException('Payment gateway not supported')

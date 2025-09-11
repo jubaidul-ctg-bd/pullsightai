@@ -71,3 +71,15 @@ export const usePurchasePackMutation = () => {
             subscriptionEndpoints.purchasePack(payload),
     });
 };
+
+export const usePurchaseHistoryQuery = ({
+    page = 1,
+    limit = 10,
+    isEnabled = true,
+} = {}) => {
+    return useQuery({
+        queryKey: ["purchaseHistory", page, limit],
+        queryFn: () => subscriptionEndpoints.purchaseHistory({ page, limit }),
+        enabled: isEnabled,
+    });
+}

@@ -20,4 +20,17 @@ export const subscriptionEndpoints = {
             .post("/pack/purchase", payload)
             .then((res) => res.data);
     },
+    purchaseHistory: async ({
+        page = 1,
+        limit = 10,
+    }) => {
+        return apiClient
+            .get("/payments/transactions", {
+                params: {
+                    page,
+                    limit,
+                },
+            })
+            .then((res) => res.data);
+    }
 };

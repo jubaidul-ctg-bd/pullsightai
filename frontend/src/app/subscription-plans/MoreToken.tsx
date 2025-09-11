@@ -1,3 +1,5 @@
+"use client";
+
 import {
     useGetPacksQuery,
     usePurchasePackMutation,
@@ -10,13 +12,22 @@ import showToast from "@/lib/toast";
 import { Pack } from "@/types/pack";
 import { ShieldCheck, Zap } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useUpgradePlanDialog } from "@/hooks/useUpgradePlanDialog";
 import UpgradePlanDialog from "@/components/reusable/UpgradePlanDialog";
-import { numToHip } from "@/lib/utils";
+import { cn, numToHip } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { ROUTE_CONSTANTS } from "@/lib/constants";
 
-const MoreToken = () => {
+const MoreToken = ({
+    className = "",
+    children,
+}:{
+    className?: string;
+    children?: ReactNode;
+}) => {
+    const router = useRouter();
     const { selectedWorkspace } = useAuthStore();
 
     const { dialogRef, showUpgradeDialog } = useUpgradePlanDialog();
@@ -38,9 +49,13 @@ const MoreToken = () => {
         }
 
         await purchasePack({ packId: selectedPackId, gateway: "stripe" }).then(
-            (data) => {
-                if (data.data.url) {
+            async (data) => {
+                if (data?.data?.url) {
                     window.location.href = data.data.url;
+                } else {
+                    showToast.success("New pack purchased successfully");
+                    setDialogOpen(false);
+                    router.push(ROUTE_CONSTANTS.APP_SUBSCRIPTION + "?paymentStatus=paid" )
                 }
             }
         );
@@ -60,12 +75,13 @@ const MoreToken = () => {
     return (
         <>
             <UpgradePlanDialog ref={dialogRef} />
-            <div
-                className="max-w-8xl mx-auto mb-20 flex flex-col lg:flex-row justify-between items-center gap-6"
-                id="more-tokens"
-            >
+            { children ? (
+                <button className={className} onClick={handleMoreDialogOpen}>
+                    {children}
+                </button>
+            ) : (
                 <button
-                    className="bg-card px-6 py-7 rounded-3xl flex text-left gap-5 items-center max-w-[450px] hover:bg-card/80 transition-colors cursor-pointer"
+                    className={cn("bg-card px-6 py-7 rounded-3xl flex text-left gap-5 items-center max-w-[450px] hover:bg-card/80 transition-colors cursor-pointer")}
                     role="button"
                     onClick={handleMoreDialogOpen}
                 >
@@ -85,18 +101,7 @@ const MoreToken = () => {
                         </p>
                     </div>
                 </button>
-                <div className="flex items-end flex-col">
-                    <h4 className="text-muted-foreground mb-2 text-sm">
-                        Payment Method:
-                    </h4>
-                    <Image
-                        src="/images/stripe.png"
-                        alt="stripe gateway"
-                        width={115}
-                        height={48}
-                    />
-                </div>
-            </div>
+            )}
 
             <Dialog
                 open={dialogOpen}
