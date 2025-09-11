@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { subscriptionEndpoints } from "../endpoints/subscription";
 import { Plan } from "@/types/plan";
 import { useAuthStore } from "@/store/authStore";
+import { queryClient } from "@/lib/tanstackQueryClient";
 
 export const useGetSubscriptionPlansQuery = ({ isEnabled = true } = {}) => {
     return useQuery<{
@@ -18,6 +19,9 @@ export const usePurchasePlanMutation = () => {
         mutationKey: ["purchasePlan"],
         mutationFn: (payload: unknown) =>
             subscriptionEndpoints.purchasePlan(payload),
+        onSuccess: () => {
+            queryClient.refetchQueries({ queryKey: ["purchaseHistory"] });
+        }
     });
 };
 
@@ -32,7 +36,7 @@ export const useCancelPlanMutation = () => {
         mutationKey: ["user"],
         mutationFn: () => subscriptionEndpoints.cancelPlan(),
         onSuccess: (data) => {
-            console.log(data);
+            // console.log(data);
             if (selectedWorkspace) {
                 setSelectedWorkspace({
                     ...selectedWorkspace,
@@ -69,6 +73,9 @@ export const usePurchasePackMutation = () => {
         mutationKey: ["purchasePack"],
         mutationFn: (payload: unknown) =>
             subscriptionEndpoints.purchasePack(payload),
+        onSuccess: () => {
+            queryClient.refetchQueries({ queryKey: ["purchaseHistory"] });
+        }
     });
 };
 

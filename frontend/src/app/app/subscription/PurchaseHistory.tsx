@@ -68,7 +68,6 @@ const PurchaseHistory = ({
         page: currentPage,
         limit: 10,
     });
-    console.log(data?.data)
 
     const { Pagination } = usePagination({
         totalPages: data?.data?.totalPages || 1,
