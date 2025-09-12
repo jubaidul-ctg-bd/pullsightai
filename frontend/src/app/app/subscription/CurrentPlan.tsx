@@ -194,7 +194,7 @@ const CurrentPlan = () => {
                                                 ? numToHip(
                                                       activePlan?.plan
                                                           ?.tokenLimitPerDev,
-                                                      2
+                                                      0
                                                   )
                                                 : "-"}
                                         </p>

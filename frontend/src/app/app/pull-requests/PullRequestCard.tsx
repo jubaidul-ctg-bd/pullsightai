@@ -17,6 +17,10 @@ interface PullRequestCardProps {
 }
 
 const PullRequestCard = ({ pullRequest, onClick }: PullRequestCardProps) => {
+    
+    const totalInputTokens = pullRequest?.pullRequestAnalysis?.reduce((acc, curr) => acc + (curr?.usageInfo?.input_tokens || 0) + (curr?.prReviewUsageInfo?.input_tokens || 0), 0) || 0;
+    const totalOutputTokens = pullRequest?.pullRequestAnalysis?.reduce((acc, curr) => acc + (curr?.usageInfo?.output_tokens || 0) + (curr?.prReviewUsageInfo?.output_tokens || 0), 0) || 0;
+
     return (
         <Card 
             className="p-4 hover:bg-card/80 transition-colors cursor-pointer"
@@ -75,7 +79,20 @@ const PullRequestCard = ({ pullRequest, onClick }: PullRequestCardProps) => {
                         </a>
                     </div>
                 </div>
-                
+                <div className="mb-3">
+                    <div className="flex gap-1 items-center">
+                        <span className="text-gray-400 text-xs w-26">Input tokens:</span>
+                        <span className="font-semibold">
+                            {(totalInputTokens || 0).toLocaleString()}
+                        </span>
+                    </div>
+                    <div className="flex gap-1 items-center">
+                        <span className="text-gray-400 text-xs w-26">Output tokens:</span>
+                        <span className="font-semibold">
+                            {(totalOutputTokens || 0).toLocaleString()}
+                        </span>
+                    </div>
+                </div>                
                 <Link href={generatePath(ROUTE_CONSTANTS.APP_PULL_REQUESTS_ISSUES, { id: pullRequest._id || "" })}>
                     <Button variant={'outline'}>
                         View Issues

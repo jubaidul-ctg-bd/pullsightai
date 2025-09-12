@@ -46,7 +46,7 @@ const IssueActionMenu = ({ issue }: { issue: Issue }) => {
                                 <h3 className="text-xl font-semibold text-white mb-2">{issue.category}</h3>
                                 <div className="flex items-center gap-2 mb-3">
                                     <SeverityBadge severity={issue.severity} />
-                                    <PrStateBadge state={issue.prState} />
+                                    
                                 </div>
                             </div>
                         </div>
@@ -138,23 +138,12 @@ const IssueActionMenu = ({ issue }: { issue: Issue }) => {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
+                                <span className="text-gray-400">Status:</span>
+                                <PrStateBadge state={issue.prState} />
+                            </div>
+                            <div className="flex items-center gap-3">
                                 <span className="text-gray-400">Repository:</span>
                                 <span className="text-white">{issue.repositorySlug}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Timeline Information */}
-                    <div className="mb-6">
-                        <h4 className="text-lg font-medium text-white mb-3">Timeline</h4>
-                        <div className="bg-gray-900/30 rounded-lg p-4 space-y-2">
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-400">Last Updated:</span>
-                                <span className="text-white">{formatDate(issue.updated || "")}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-gray-400">Status:</span>
-                                <span className="text-white capitalize">{issue.status}</span>
                             </div>
                         </div>
                     </div>

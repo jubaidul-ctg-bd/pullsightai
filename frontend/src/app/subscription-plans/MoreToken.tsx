@@ -185,7 +185,7 @@ const MoreToken = ({
                                                                     <p className="text-2xl font-bold ">
                                                                         {numToHip(
                                                                             pack.token
-                                                                        )}
+                                                                        ,0)}
                                                                     </p>
                                                                     <p className="text-xs text-muted-foreground">
                                                                         Tokens
