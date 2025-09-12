@@ -19,6 +19,7 @@ import UpgradePlanDialog from "@/components/reusable/UpgradePlanDialog";
 import { cn, numToHip } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { ROUTE_CONSTANTS } from "@/lib/constants";
+import Badge from "@/components/reusable/Badge";
 
 const MoreToken = ({
     className = "",
@@ -108,7 +109,7 @@ const MoreToken = ({
                 onOpenChange={setDialogOpen}
                 title="Purchase Token Pack"
                 description="Select a token pack to purchase additional tokens for your workspace."
-                size="lg"
+                size="xl"
                 actions={[
                     {
                         label: "Cancel",
@@ -129,7 +130,7 @@ const MoreToken = ({
                         <RadioGroup
                             value={selectedPackId}
                             onValueChange={setSelectedPackId}
-                            className="space-y-4 grid grid-cols-1 xl:grid-cols-2"
+                            className="space-y-4 grid grid-cols-1 xl:grid-cols-3"
                         >
                             {packs?.data
                                 ?.filter(
@@ -154,7 +155,12 @@ const MoreToken = ({
                                                         : ""
                                                 }`}
                                             >
-                                                <CardContent className="px-6">
+                                                <CardContent className="px-6 relative">
+                                                    {pack?.highlight && (
+                                                        <Badge className="bg-white absolute -top-2 right-5">
+                                                            {pack.highlight}
+                                                        </Badge>
+                                                    )}
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex-1">
                                                             <div className="flex gap-3 mb-2">

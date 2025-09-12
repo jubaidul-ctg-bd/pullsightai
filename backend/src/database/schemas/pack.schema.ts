@@ -7,6 +7,9 @@ export type PackDocument = Pack & Document
 
 @Schema({ timestamps: true, versionKey: false })
 export class Pack {
+    @Prop({ required: false })
+    highlight: string
+
     @Prop({ required: true })
     title: string
 

@@ -1,6 +1,10 @@
 import { IsBoolean, IsNumber, IsOptional, IsString, Min } from 'class-validator'
 
 export class CreatePackDto {
+    @IsOptional()
+    @IsString()
+    highlight: string
+
     @IsString()
     title: string
 
