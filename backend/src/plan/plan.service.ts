@@ -193,7 +193,7 @@ export class PlanService {
             await this.stripeService.cancelSubscription(
                 purchasedPlan.subscriptionId
             )
-        purchasedPlan.status = Status.ACTIVE
+        purchasedPlan.status = Status.CANCELED
         purchasedPlan.subscriptionId = ''
         await purchasedPlan.save()
         return await this.dataService.workspaces.updateOne(

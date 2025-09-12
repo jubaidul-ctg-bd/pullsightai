@@ -50,7 +50,7 @@ export const columns: ColumnDef<PullRequest>[] = [
             cellClassName: "w-40",
         },
         cell: ({ row }) => {
-            const totalInputTokens = row.original?.pullRequestAnalysis?.reduce((acc, curr) => acc + (curr?.usageInfo?.input_tokens || 0) + (curr?.prReviewUsageInfo?.output_tokens || 0), 0) || 0;
+            const totalInputTokens = row.original?.pullRequestAnalysis?.reduce((acc, curr) => acc + (curr?.usageInfo?.input_tokens || 0) + (curr?.prReviewUsageInfo?.input_tokens || 0), 0) || 0;
             const totalOutputTokens = row.original?.pullRequestAnalysis?.reduce((acc, curr) => acc + (curr?.usageInfo?.output_tokens || 0) + (curr?.prReviewUsageInfo?.output_tokens || 0), 0) || 0;
             return (
                 <div className="">

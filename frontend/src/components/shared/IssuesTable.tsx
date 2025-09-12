@@ -16,6 +16,7 @@ import { TeamMember } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
 import { ExternalLink, Info } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import MdPreview from "../reusable/MdPreview";
 
 interface IssuesTableProps {
     className?: string;
@@ -60,12 +61,53 @@ const IssueActionMenu = ({ issue }: { issue: Issue }) => {
                         <div className="mb-6">
                             <h4 className="text-lg font-medium text-white mb-3">Issue Content</h4>
                             <div className="bg-gray-900/30 rounded-lg p-4">
-                                <div className="text-sm text-gray-400 mb-2">
-                                    Lines {issue.lineStart} - {issue.lineEnd}
-                                </div>
-                                <pre className="text-gray-300 text-sm font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed">
-                                    {issue.content}
-                                </pre>
+                                {issue.codeSnippet && (
+                                    <div className="bg-gray-950 rounded border border-gray-700 p-3 mb-3">
+                                        <pre className="text-xs overflow-x-auto">
+                                            {issue.codeSnippet
+                                                .trim()
+                                                .split("\n")
+                                                .map((line, index) => {
+                                                    const lineNumber =
+                                                        (issue.codeSnippetLineStart ??
+                                                            issue.lineStart) + index;
+                                                    const isHighlighted =
+                                                        lineNumber >=
+                                                            issue.lineStart &&
+                                                        lineNumber <= issue.lineEnd;
+
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className="flex"
+                                                        >
+                                                            <span className="text-gray-500 w-8 text-right pr-2 select-none font-mono flex-shrink-0">
+                                                                {lineNumber > 0
+                                                                    ? lineNumber
+                                                                    : ""}
+                                                            </span>
+                                                            <code
+                                                                className={`flex-1 px-2 ${
+                                                                    isHighlighted
+                                                                        ? issue.severity ===
+                                                                        "critical"
+                                                                            ? "bg-red-900/40 text-red-200 border-l-2 border-red-500"
+                                                                            : issue.severity ===
+                                                                            "warning"
+                                                                            ? "bg-yellow-900/40 text-yellow-200 border-l-2 border-yellow-500"
+                                                                            : "bg-blue-900/40 text-blue-200 border-l-2 border-blue-500"
+                                                                        : "text-gray-300"
+                                                                }`}
+                                                            >
+                                                                {line}
+                                                            </code>
+                                                        </div>
+                                                    );
+                                                })}
+                                        </pre>
+                                    </div>
+                                )}
+                                <MdPreview content={issue.content || ""} className="text-sm" />
                             </div>
                         </div>
                     )}
