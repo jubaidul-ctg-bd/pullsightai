@@ -223,26 +223,28 @@ const PrCodeAnalysis: FC<Props> = ({ analysisData, pullRequest }) => {
                             height={42}
                             className="flex-shrink-0"
                         />
-                        <div className="flex-1 max-w-full flex flex-col lg:flex-row gap-y-2">
-                            <Badge
-                                type="faded"
-                                className={cn(
-                                    "mr-2",
-                                    getSeverityClassname(
-                                        comment.severity?.toLowerCase()
-                                    )
-                                )}
-                            >
-                                Severity:{" "}
-                                <span className="capitalize">
-                                    {comment.severity}
+                        <div className="flex-1 max-w-full space-y-1">
+                            <div className="flex flex-col lg:flex-row gap-y-2">
+                                <Badge
+                                    type="faded"
+                                    className={cn(
+                                        "mr-2",
+                                        getSeverityClassname(
+                                            comment.severity?.toLowerCase()
+                                        )
+                                    )}
+                                >
+                                    Severity:{" "}
+                                    <span className="capitalize">
+                                        {comment.severity}
+                                    </span>
+                                </Badge>
+                                <span className="text-gray-400 text-sm break-words">
+                                    {comment.filePath}:{comment.lineStart}
+                                    {comment.lineEnd !== comment.lineStart &&
+                                        `-${comment.lineEnd}`}
                                 </span>
-                            </Badge>
-                            <span className="text-gray-400 text-sm break-words">
-                                {comment.filePath}:{comment.lineStart}
-                                {comment.lineEnd !== comment.lineStart &&
-                                    `-${comment.lineEnd}`}
-                            </span>
+                            </div>
                             <div className="font-medium">
                                 {comment.category}
                             </div>
