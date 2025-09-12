@@ -468,6 +468,10 @@ export class WorkspaceService {
                 ...filter
             },
             {
+                populate: {
+                    path: 'pullRequestAnalysis',
+                    select: 'usageInfo prReviewUsageInfo'
+                },
                 page,
                 limit,
                 sort: { _id: -1 },

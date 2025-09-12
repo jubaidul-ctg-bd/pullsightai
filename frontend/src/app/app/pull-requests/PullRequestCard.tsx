@@ -6,14 +6,22 @@ import Avatar from "../../../components/reusable/Avatar";
 import Badge from "../../../components/reusable/Badge";
 import { formatDate } from "@/lib/dayjs";
 import { ExternalLink, GitPullRequest } from "lucide-react";
+import Button from "@/components/reusable/Button";
+import Link from "next/link";
+import { generatePath } from "@/lib/utils";
+import { ROUTE_CONSTANTS } from "@/lib/constants";
 
 interface PullRequestCardProps {
     pullRequest: PullRequest;
+    onClick?: (pullRequest: PullRequest) => void;
 }
 
-const PullRequestCard = ({ pullRequest }: PullRequestCardProps) => {
+const PullRequestCard = ({ pullRequest, onClick }: PullRequestCardProps) => {
     return (
-        <Card className="p-4 hover:bg-card/80 transition-colors">
+        <Card 
+            className="p-4 hover:bg-card/80 transition-colors cursor-pointer"
+            onClick={() => onClick?.(pullRequest)}
+        >
             <CardContent className="p-0">
                 <div className="flex items-start justify-between mb-3">
                     <div className="flex-1 min-w-0">
@@ -67,6 +75,12 @@ const PullRequestCard = ({ pullRequest }: PullRequestCardProps) => {
                         </a>
                     </div>
                 </div>
+                
+                <Link href={generatePath(ROUTE_CONSTANTS.APP_PULL_REQUESTS_ISSUES, { id: pullRequest._id || "" })}>
+                    <Button variant={'outline'}>
+                        View Issues
+                    </Button>
+                </Link>
             </CardContent>
         </Card>
     );

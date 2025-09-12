@@ -12,6 +12,10 @@ export interface PullRequest {
     prUpdatedAt: string;
     prClosedAt: string | null;
     prMergedAt: string | null;
+    pullRequestAnalysis: {
+        usageInfo: any
+        prReviewUsageInfo: any
+    }[],
     repo?: string;
     prUrl: string;
 }

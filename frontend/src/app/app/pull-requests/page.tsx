@@ -14,9 +14,12 @@ import Tabs from "@/components/reusable/Tabs";
 import Select from "@/components/reusable/Select";
 import ContentCard from "@/components/reusable/ContentCard";
 import { TeamMember } from "@/types/user";
+import { ROUTE_CONSTANTS } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 import ResponsivePullRequestList from "./ResponsivePullRequestList";
 
 const PullRequestsPage = () => {
+    const router = useRouter();
     const [tab, setTab] = useState<"all" | "activePrs" | "myPrs" | "">("all");
     const [prState, setPrState] = useState<string>("");
     const [repo, setRepo] = useState<string | null>(null);
@@ -48,6 +51,7 @@ const PullRequestsPage = () => {
         currentPage,
         onPageChange: setCurrentPage,
     });
+
 
     return (
         <div className="">

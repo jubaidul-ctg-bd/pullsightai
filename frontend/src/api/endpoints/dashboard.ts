@@ -62,6 +62,7 @@ export const dashboardEndpoints = {
         prUser,
         prState,
         severity,
+        pullRequest
     }: {
         page?: number;
         limit?: number;
@@ -71,6 +72,7 @@ export const dashboardEndpoints = {
         prUser?: string | null;
         prState?: string | null;
         severity?: string | null;
+        pullRequest?: string | null;
     }) => {
         return apiClient
             .get("/api/dashboard/issue-card", {
@@ -83,6 +85,7 @@ export const dashboardEndpoints = {
                     severity,
                     page,
                     limit,
+                    pullRequest
                 },
             })
             .then((res) => res.data);

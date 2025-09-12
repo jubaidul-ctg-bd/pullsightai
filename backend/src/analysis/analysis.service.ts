@@ -320,6 +320,16 @@ export class AnalysisService {
                 pullRequest: savedPullRequestFormattedData._id,
                 workspace
             })
+        await this.dataService.pullRequests.updateOne(
+            { _id: savedPullRequestFormattedData._id },
+            {
+                $addToSet: {
+                    pullRequestAnalysis: pullRequestAnalysis[
+                        '_id'
+                    ] as Types.ObjectId
+                }
+            }
+        )
         console.log('Created pullRequestAnalysis:', pullRequestAnalysis)
         try {
             const requestBody = {

@@ -74,6 +74,7 @@ export const useDashboardIssuesQuery = ({
     prUser,
     prState,
     severity,
+    pullRequest,
 }: {
     isEnabled?: boolean;
     page?: number;
@@ -84,11 +85,12 @@ export const useDashboardIssuesQuery = ({
     prUser?: string | null;
     prState?: string | null;
     severity?: string | null;
+    pullRequest?: string | null;
 }) => {
     return useQuery({
         queryKey: [
             "dashboardIssues",
-            { from, to, repo, prUser, prState, severity, page, limit },
+            { from, to, repo, prUser, prState, severity, page, limit, pullRequest },
         ],
         queryFn: () =>
             dashboardEndpoints.getIssues({
@@ -100,6 +102,7 @@ export const useDashboardIssuesQuery = ({
                 severity,
                 page,
                 limit,
+                pullRequest
             }),
         enabled: isEnabled,
     });

@@ -28,3 +28,10 @@ export const numToHip = (num: number, toFixed: number = 2) => {
     if (num >= 1e3) return (num / 1e3).toFixed(toFixed) + "k";
     return num.toFixed(toFixed).toString();
 };
+
+
+export function generatePath(path: string, params: Record<string, string | number>) {
+  return Object.keys(params).reduce((acc, key) => {
+    return acc.replace(`:${key}`, encodeURIComponent(String(params[key])));
+  }, path);
+}

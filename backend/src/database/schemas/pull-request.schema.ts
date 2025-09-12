@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
 import * as mongoosePaginate from 'mongoose-paginate-v2'
 import * as uniqueValidator from 'mongoose-unique-validator'
 
@@ -117,6 +117,11 @@ export class PullRequest {
 
     @Prop({ type: Number, default: null })
     issueCount: number
+
+    @Prop({
+        type: [{ type: Types.ObjectId, ref: 'PullRequestAnalysis' }]
+    })
+    pullRequestAnalysis: Types.ObjectId[]
 }
 
 const schema = SchemaFactory.createForClass(PullRequest)

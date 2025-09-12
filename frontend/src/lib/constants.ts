@@ -23,6 +23,7 @@ export const ROUTE_CONSTANTS = {
     APP_DASHBOARD: "/app/dashboard",
     APP_REPOSITORIES: "/app/repositories",
     APP_PULL_REQUESTS: "/app/pull-requests",
+    APP_PULL_REQUESTS_ISSUES: "/app/pull-requests/:id/issues",
     APP_TEAM_MEMBERS: "/app/team-members",
     APP_SUBSCRIPTION: "/app/subscription",
     APP_SETTINGS: "/app/settings",

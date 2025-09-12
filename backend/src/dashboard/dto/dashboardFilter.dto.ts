@@ -1,5 +1,12 @@
 import { Transform } from 'class-transformer'
-import { IsDateString, IsIn, IsInt, IsOptional, Min } from 'class-validator'
+import {
+    IsDateString,
+    IsIn,
+    IsInt,
+    IsMongoId,
+    IsOptional,
+    Min
+} from 'class-validator'
 
 export class DashboardFilterDto {
     @IsOptional()
@@ -47,4 +54,8 @@ export class IssueCardFilterDto extends DashboardFilterDto {
     @IsInt()
     @Min(1)
     limit?: number = 10
+
+    @IsOptional()
+    @IsMongoId()
+    pullRequest: string
 }

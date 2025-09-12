@@ -35,6 +35,7 @@ interface DataTableProps<TData> {
     initialSelection?: (row: TData) => boolean;
     columnFilters?: { id: string; value: unknown }[];
     onColumnFiltersChange?: (filters: { id: string; value: unknown }[]) => void;
+    onRowClick?: (row: TData) => void;
 }
 
 const DataTable = <TData,>({
@@ -47,6 +48,7 @@ const DataTable = <TData,>({
     initialSelection,
     columnFilters,
     onColumnFiltersChange,
+    onRowClick,
 }: DataTableProps<TData>) => {
     const [internalColumnFilters, setInternalColumnFilters] = useState<
         { id: string; value: unknown }[]
@@ -114,7 +116,7 @@ const DataTable = <TData,>({
                 .rows.map((row) => row.original);
             onSelectionChange(selectedRows);
         }
-    }, [rowSelection]);
+    }, [rowSelection, onSelectionChange, table]);
 
     return (
         <div
@@ -163,7 +165,12 @@ const DataTable = <TData,>({
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    className={cn("", noBorder && "border-0")}
+                                    className={cn(
+                                        "",
+                                        noBorder && "border-0",
+                                        onRowClick && "cursor-pointer hover:bg-white/5 transition-colors"
+                                    )}
+                                    onClick={() => onRowClick?.(row.original)}
                                 >
                                     {row.getVisibleCells().map((cell) => {
                                         const meta = cell.column.columnDef

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Types } from 'mongoose'
 import { DatabaseService } from 'src/database/database.service'
 import {
     IssueAnalysisCardFilterDto,
@@ -428,6 +429,12 @@ export class DashboardService {
         }
         if (issueCardFilterDto.prState) {
             pullRequestMatch['pullRequest.prState'] = issueCardFilterDto.prState
+        }
+
+        if (issueCardFilterDto.pullRequest) {
+            baseMatch['pullRequest'] = Types.ObjectId.createFromHexString(
+                issueCardFilterDto.pullRequest
+            )
         }
 
         // Get pagination parameters
