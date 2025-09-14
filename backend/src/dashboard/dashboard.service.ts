@@ -409,10 +409,18 @@ export class DashboardService {
             }
         }
 
+        let pullRequest
         if (issueCardFilterDto.pullRequest) {
             baseMatch['pullRequest'] = Types.ObjectId.createFromHexString(
                 issueCardFilterDto.pullRequest
             )
+            pullRequest = await this.dataService.pullRequests
+                .findOne({
+                    _id: issueCardFilterDto.pullRequest
+                })
+                .select(
+                    'provider prTitle prUrl prNumber prUser prUserAvatar repo owner prState prCreatedAt'
+                )
         }
 
         // Add repository filter if provided
@@ -474,7 +482,7 @@ export class DashboardService {
                                 {
                                     $subtract: [
                                         new Date(),
-                                        '$pullRequest.createdAt'
+                                        '$pullRequest.prCreatedAt'
                                     ]
                                 },
                                 1000 * 60 * 60 * 24
@@ -652,6 +660,7 @@ export class DashboardService {
         })
 
         return {
+            pullRequest: pullRequest || null,
             issueCardData: issueCardData,
             totalCount: totalCount,
             totalDocs: totalDocs,

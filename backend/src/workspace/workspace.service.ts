@@ -462,6 +462,7 @@ export class WorkspaceService {
         return this.dataService.pullRequests.paginate(
             {
                 owner: userData?.currentWorkspace!['slug'],
+                provider: userData?.provider,
                 // createdAt: {
                 //     $gte: thirtyDaysAgo
                 // },
@@ -475,7 +476,7 @@ export class WorkspaceService {
                 page,
                 limit,
                 sort: { _id: -1 },
-                select: 'provider prTitle prUser prUserAvatar owner repo prNumber prUrl prId prCreatedAt prUpdatedAt  prMergedAt prState issueCount'
+                select: 'provider prTitle prUser prUserAvatar owner repo prNumber prUrl prId prCreatedAt prUpdatedAt  prMergedAt prState issueCount prTotalLineAddition prTotalLineDeletion'
             }
         )
     }

@@ -398,6 +398,12 @@ export class GitlabService {
         // Update member list with saved member information
         const updatedMembers = members.map((member: any) => {
             const savedMember = savedMembersMap.get(member.providerId)
+
+            // Remove the member from map after getting the data
+            if (savedMember) {
+                savedMembersMap.delete(member.providerId)
+            }
+
             return {
                 ...member,
                 _id: savedMember?._id ?? null,
@@ -410,6 +416,18 @@ export class GitlabService {
                 joinedAt: savedMember?.joinedAt
             }
         })
+
+        // Set isActive to false for remaining members in savedMembersMap
+        // These are members that exist in database but not in the current API response
+        if (savedMembersMap.size > 0) {
+            const remainingMemberIds = Array.from(savedMembersMap.values()).map(
+                (member) => member._id
+            )
+            await this.dataService.workspaceMembers.updateMany(
+                { _id: { $in: remainingMemberIds } },
+                { $set: { isActive: false } }
+            )
+        }
 
         // Apply filter if requested
         if (query.isActive !== undefined) {
