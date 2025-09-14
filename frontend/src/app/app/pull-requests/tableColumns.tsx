@@ -34,6 +34,7 @@ export const columns: ColumnDef<PullRequest>[] = [
                         className="opacity-50"
                         href={row.original?.prUrl}
                         target="_blank"
+                        onClick={(e) => e.stopPropagation()}
                     >
                         <ExternalLink className="w-auto h-4" />
                     </a>
@@ -41,6 +42,34 @@ export const columns: ColumnDef<PullRequest>[] = [
                 <div className="opacity-50">{row.original?.repo}</div>
             </div>
         ),
+    },
+    {
+        accessorKey: "prTotalLineAddition",
+        header: "Lines Changed",
+        meta: {
+            headerClassName: "w-32",
+            cellClassName: "w-32",
+        },
+        cell: ({ row }) => {
+            const additions = row.original?.prTotalLineAddition as number | undefined;
+            const deletions = row.original?.prTotalLineDeletion as number | undefined;
+            return (
+                <div className="flex flex-col text-sm">
+                    <div className="flex gap-1 items-center">
+                        <span className="text-gray-400 text-xs w-8">Add:</span>
+                        <span className="font-semibold text-green-600">
+                            {additions ? `+${additions.toLocaleString()}` : "+0"}
+                        </span>
+                    </div>
+                    <div className="flex gap-1 items-center">
+                        <span className="text-gray-400 text-xs w-8">Del:</span>
+                        <span className="font-semibold text-red-600">
+                            {deletions ? `-${deletions.toLocaleString()}` : "-0"}
+                        </span>
+                    </div>
+                </div>
+            );
+        }
     },
     {
         accessorKey: "pullRequestAnalysis",
@@ -130,19 +159,19 @@ export const columns: ColumnDef<PullRequest>[] = [
             );
         },
     },
-    {
-        accessorKey: "prAutoMerge",
-        header: "Action",
-        meta: {
-            headerClassName: "w-28",
-            cellClassName: "w-28",
-        },
-        cell: ({ row }) => {
-            return (
-                <Link className="text-gray-400" href={generatePath(ROUTE_CONSTANTS.APP_PULL_REQUESTS_ISSUES, { id: row.original._id || "" })}>
-                    <ArrowRight className="w-4 h-4 " />
-                </Link>
-            );
-        },
-    }
+    // {
+    //     accessorKey: "prAutoMerge",
+    //     header: "Action",
+    //     meta: {
+    //         headerClassName: "w-28",
+    //         cellClassName: "w-28",
+    //     },
+    //     cell: ({ row }) => {
+    //         return (
+    //             <Link className="text-gray-400" href={generatePath(ROUTE_CONSTANTS.APP_PULL_REQUESTS_ISSUES, { id: row.original._id || "" })}>
+    //                 <ArrowRight className="w-4 h-4 " />
+    //             </Link>
+    //         );
+    //     },
+    // }
 ];

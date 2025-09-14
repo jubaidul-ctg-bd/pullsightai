@@ -27,6 +27,8 @@ interface IssuesTableProps {
     showSeverityTabs?: boolean; // Whether to show the severity filter tabs
     showAuthorFilter?: boolean; // Whether to show the author filter
     showPrStatusFilter?: boolean; // Whether to show the PR status filter
+    showPrDetailsBox?: boolean; // Whether to show the PR details box
+    showPrColumn?: boolean; // Whether to show the PR column in the table
     title?: string; // Custom title
 }
 
@@ -160,84 +162,6 @@ const IssueActionMenu = ({ issue }: { issue: Issue }) => {
     );
 }
 
-const columns: ColumnDef<Issue>[] = [
-    {
-        accessorKey: "category",
-        header: "Issue",
-        meta: {
-            headerClassName: "min-w-64 flex-1",
-            cellClassName: "min-w-64 flex-1",
-        },
-        cell: ({ row }) => (
-            <div>
-                <div className="flex gap-2">
-                    <span className="text-white mb-1 text-base">
-                        {row.getValue("category")}
-                    </span>
-                    <IssueActionMenu issue={row.original} />
-                </div>
-                <div className="opacity-50 truncate">
-                    {row.original?.filePath}
-                </div>
-            </div>
-        ),
-    },
-    {
-        accessorKey: "prTitle",
-        header: "PR",
-        cell: ({ row }) => (
-            <div>
-                <div className="flex gap-2">
-                    <span className="text-white mb-1 text-md">
-                        {row.getValue("prTitle")}
-                    </span>
-                    <a
-                        className="opacity-50"
-                        href={row.original?.prUrl}
-                        target="_blank"
-                    >
-                        <ExternalLink className="w-auto h-4" />
-                    </a>
-                </div>
-                <div className="opacity-50">{row.original?.repositorySlug}</div>
-            </div>
-        ),
-    },
-    {
-        accessorKey: "prUser",
-        header: "Author",
-        cell: ({ row }) => (
-            <Avatar src={""} name={row.original?.prUser} className="" />
-        ),
-    },
-    {
-        accessorKey: "severity",
-        header: "Severity",
-        cell: ({ row }) => <SeverityBadge severity={row.original?.severity} />,
-    },
-    {
-        accessorKey: "prState",
-        header: "Status",
-        cell: ({ row }) => <PrStateBadge state={row.original?.prState} />,
-    },
-    {
-        accessorKey: "daysOpen",
-        header: "Days open",
-        cell: ({ row }) => (
-            <span className="bg-white/5 text-gray-400 rounded-full px-2 py-1 inline-block">
-                {row.original?.daysOpen || 0}
-            </span>
-        ),
-    },
-    {
-        accessorKey: "updated",
-        header: "Updated",
-        cell: ({ row }) => (
-            <span>{formatDate(row.original?.updated || "")}</span>
-        ),
-    },
-];
-
 const IssuesTable = ({ 
     className, 
     fromDate, 
@@ -247,6 +171,8 @@ const IssuesTable = ({
     showSeverityTabs = true,
     showAuthorFilter = false,
     showPrStatusFilter = false,
+    showPrDetailsBox = false,
+    showPrColumn = true,
     title = "Issues"
 }: IssuesTableProps) => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -256,6 +182,85 @@ const IssuesTable = ({
 
     // Store the last known counts to prevent showing 0 during loading
     const lastCountsRef = useRef<any>(null);
+
+    // Define columns dynamically based on showPrColumn prop
+    const columns: ColumnDef<Issue>[] = [
+        {
+            accessorKey: "category",
+            header: "Issue",
+            meta: {
+                headerClassName: "min-w-64 flex-1",
+                cellClassName: "min-w-64 flex-1",
+            },
+            cell: ({ row }) => (
+                <div>
+                    <div className="flex gap-2">
+                        <span className="text-white mb-1 text-base">
+                            {row.getValue("category")}
+                        </span>
+                        <IssueActionMenu issue={row.original} />
+                    </div>
+                    <div className="opacity-50 truncate">
+                        {row.original?.filePath}
+                    </div>
+                </div>
+            ),
+        },
+        ...(showPrColumn ? [{
+            accessorKey: "prTitle",
+            header: "PR",
+            cell: ({ row }: { row: any }) => (
+                <div>
+                    <div className="flex gap-2">
+                        <span className="text-white mb-1 text-md">
+                            {row.getValue("prTitle")}
+                        </span>
+                        <a
+                            className="opacity-50"
+                            href={row.original?.prUrl}
+                            target="_blank"
+                        >
+                            <ExternalLink className="w-auto h-4" />
+                        </a>
+                    </div>
+                    <div className="opacity-50">{row.original?.repositorySlug}</div>
+                </div>
+            ),
+        }] : []),
+        {
+            accessorKey: "prUser",
+            header: "Author",
+            cell: ({ row }) => (
+                <Avatar src={""} name={row.original?.prUser} className="" />
+            ),
+        },
+        {
+            accessorKey: "severity",
+            header: "Severity",
+            cell: ({ row }) => <SeverityBadge severity={row.original?.severity} />,
+        },
+        {
+            accessorKey: "prState",
+            header: "Status",
+            cell: ({ row }) => <PrStateBadge state={row.original?.prState} />,
+        },
+        {
+            accessorKey: "daysOpen",
+            header: "Days open",
+            cell: ({ row }) => (
+                <span className="bg-white/5 text-gray-400 rounded-full px-2 py-1 inline-block">
+                    {row.original?.daysOpen || 0}
+                </span>
+            ),
+        },
+        {
+            accessorKey: "updated",
+            header: "Updated",
+            cell: ({ row }) => (
+                <span>{formatDate(row.original?.updated || "")}</span>
+            ),
+        },
+    ];
 
     const { data: teamMembersData } = useGetWorkspaceTeamMembersQuery({
         isEnabled: true,
@@ -305,6 +310,40 @@ const IssuesTable = ({
 
     return (
         <div className={cn("flex flex-col flex-1", className)}>
+            {showPrDetailsBox && data?.data?.pullRequest && (
+                <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-4 mb-6">
+                    <div className="flex lg:items-center gap-4">
+                        <Avatar 
+                            src={data.data.pullRequest.prUserAvatar} 
+                            name={data.data.pullRequest.prUser} 
+                            className="w-10 h-10" 
+                        />
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-white font-semibold text-lg">
+                                    {data.data.pullRequest.prTitle}
+                                </h3>
+                                <a
+                                    href={data.data.pullRequest.prUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                                    title="View Pull Request"
+                                >
+                                    <ExternalLink className="w-4 h-4" />
+                                </a>
+                            </div>
+                            <div className="flex flex-col lg:flex-row lg:items-center gap-x-4 gap-y-2 text-sm text-gray-400">
+                                <span>PR #{data.data.pullRequest.prNumber}</span>
+                                <span>by {data.data.pullRequest.prUser}</span>
+                                <span>{data.data.pullRequest.owner}/{data.data.pullRequest.repo}</span>
+                                <PrStateBadge state={data.data.pullRequest.prState} />
+                                <span>Created {formatDate(data.data.pullRequest.prCreatedAt)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             {(showSeverityTabs || showAuthorFilter || showPrStatusFilter) && (
                 <>
                     <div className="flex flex-wrap md:flex-nowrap items-center gap-x-6 gap-y-2 mb-6">

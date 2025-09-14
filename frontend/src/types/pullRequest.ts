@@ -12,6 +12,8 @@ export interface PullRequest {
     prUpdatedAt: string;
     prClosedAt: string | null;
     prMergedAt: string | null;
+    prTotalLineAddition?: number;
+    prTotalLineDeletion?: number;
     pullRequestAnalysis: {
         usageInfo: any
         prReviewUsageInfo: any

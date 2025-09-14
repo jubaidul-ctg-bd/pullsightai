@@ -17,6 +17,7 @@ import { TeamMember } from "@/types/user";
 import { ROUTE_CONSTANTS } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import ResponsivePullRequestList from "./ResponsivePullRequestList";
+import { generatePath } from "@/lib/utils";
 
 const PullRequestsPage = () => {
     const router = useRouter();
@@ -154,6 +155,11 @@ const PullRequestsPage = () => {
                     <ResponsivePullRequestList
                         data={data?.data?.docs || []}
                         isLoading={isFetching}
+                        onRowClick={(pr) =>
+                            router.push(generatePath(
+                                ROUTE_CONSTANTS.APP_PULL_REQUESTS_ISSUES, { id: pr._id || "" }
+                            ))
+                        }
                     />
                     <Pagination />
                 </ContentCard.Body>

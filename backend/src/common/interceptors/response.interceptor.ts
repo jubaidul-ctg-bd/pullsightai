@@ -34,7 +34,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
                         response.cookie('accessToken', data.token, {
                             httpOnly: true,
                             sameSite: 'lax',
-                            domain: `.${this.configService.get<string>('DOMAIN')}`,
+                            domain: `${this.configService.get<string>('DOMAIN')}`,
                             maxAge: 7 * 24 * 60 * 60 * 1000 // 7days
                         })
                     }
@@ -45,7 +45,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
                     response.clearCookie('accessToken', {
                         httpOnly: true,
                         sameSite: 'lax',
-                        domain: `.${this.configService.get<string>('DOMAIN')}`
+                        domain: `${this.configService.get<string>('DOMAIN')}`
                     })
                 }
                 return {

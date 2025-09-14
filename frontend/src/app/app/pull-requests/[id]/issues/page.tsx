@@ -40,6 +40,8 @@ const PullRequestIssuesPage = () => {
                         showSeverityTabs={true}
                         showAuthorFilter={false}
                         showPrStatusFilter={false}
+                        showPrDetailsBox={true}
+                        showPrColumn={false}
                     />
                 </ContentCard.Body>
             </ContentCard>

@@ -8,11 +8,13 @@ import PullRequestCard from "./PullRequestCard";
 interface ResponsivePullRequestListProps {
     data: PullRequest[];
     isLoading: boolean;
+    onRowClick?: (pullRequest: PullRequest) => void;
 }
 
 const ResponsivePullRequestList = ({
     data,
     isLoading,
+    onRowClick,
 }: ResponsivePullRequestListProps) => {
     return (
         <>
@@ -22,6 +24,7 @@ const ResponsivePullRequestList = ({
                     columns={columns}
                     isLoading={isLoading}
                     data={data}
+                    onRowClick={onRowClick}
                 />
             </div>
 
