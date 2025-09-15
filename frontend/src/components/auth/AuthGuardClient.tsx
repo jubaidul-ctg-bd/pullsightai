@@ -50,6 +50,7 @@ export default function AuthGuardClient({ children }: { children: ReactNode }) {
         // redirect to dashboard if user is authenticated and workspace is selected
         if (
             !pathname.includes(ROUTE_CONSTANTS.APP_SUBSCRIPTION_PLANS) &&
+            !pathname.includes(ROUTE_CONSTANTS.APP_PLAN_EXPIRED) &&
             user &&
             selectedWorkspace &&
             (!selectedWorkspace.onboardingStep ||
@@ -59,6 +60,36 @@ export default function AuthGuardClient({ children }: { children: ReactNode }) {
             redirect(ROUTE_CONSTANTS.APP_DASHBOARD);
         }
     }, [user, hydrated, selectedWorkspace]);
+
+    // Check if user is on plan-expired page but plan is actually valid
+    useEffect(() => {
+        if (!hydrated || !selectedWorkspace) return;
+
+        // Only check if user is on the plan-expired page
+        if (pathname === ROUTE_CONSTANTS.APP_PLAN_EXPIRED) {
+            // Check if plan is actually valid
+            const isPlanValid = () => {
+                if (!selectedWorkspace.currentPlan) return false;
+
+                // If it's not a default/trial plan, it's valid
+                if (!selectedWorkspace.currentPlan.isDefault) return true;
+
+                // If it is a trial, check if it's still within the period
+                if (selectedWorkspace.currentPlan.periodEnd) {
+                    const currentDate = new Date();
+                    const periodEnd = new Date(selectedWorkspace.currentPlan.periodEnd);
+                    return currentDate <= periodEnd;
+                }
+
+                return false;
+            };
+
+            // If plan is valid, redirect to dashboard
+            if (isPlanValid()) {
+                redirect(ROUTE_CONSTANTS.APP_DASHBOARD);
+            }
+        }
+    }, [hydrated, selectedWorkspace, pathname]);
 
     // useEffect(() => {
     //     console.log("First effect", user);

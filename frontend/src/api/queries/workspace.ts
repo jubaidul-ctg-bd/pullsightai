@@ -67,7 +67,7 @@ export const useUpdateRepositoryMutation = () => {
         mutationFn: workspaceEndpoints.updateRepository,
         onSuccess: () => {
             // Invalidate all queries that start with "repositories"
-            queryClient.invalidateQueries({ queryKey: ["repositories"] });
+            queryClient.refetchQueries({ queryKey: ["repositories"] });
         },
     });
 };

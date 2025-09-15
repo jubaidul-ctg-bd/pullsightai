@@ -29,4 +29,5 @@ export const ROUTE_CONSTANTS = {
     APP_SETTINGS: "/app/settings",
 
     APP_SUBSCRIPTION_PLANS: "/subscription-plans",
+    APP_PLAN_EXPIRED: "/plan-expired",
 };

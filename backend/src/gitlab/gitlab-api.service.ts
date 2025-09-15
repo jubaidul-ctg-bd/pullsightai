@@ -641,7 +641,7 @@ export class GitlabApiService {
             return [
                 {
                     provider: 'gitlab',
-                    providerId: userData.id.toString(),
+                    providerId: userData.providerId,
                     username: userData.username,
                     displayName: userData.displayName,
                     avatarUrl: userData.avatarUrl

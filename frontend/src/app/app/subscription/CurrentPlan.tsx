@@ -92,14 +92,13 @@ const CurrentPlan = () => {
                         {isFreeOrTrialPlan ? "Upgrade Plan" : "Change Plan"}
                     </Button>
                 </Link>
-                {isPaidPlan && (
-                    <Button
-                        variant="outline"
-                        onClick={() => setShowConfirm(true)}
-                    >
-                        Cancel Subscription
-                    </Button>
-                )}
+                
+                <Button
+                    variant="outline"
+                    onClick={() => setShowConfirm(true)}
+                >
+                    Cancel Subscription
+                </Button>
             </div>
             {/* Plan details card */}
             <Card className="border-0">

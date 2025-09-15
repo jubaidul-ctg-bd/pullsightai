@@ -8,11 +8,13 @@ import {
     AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
+    AlertDialogOverlay,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { DialogOverlay } from "../ui/dialog";
 
 interface Props {
     title: string;
@@ -70,6 +72,7 @@ const ConfirmDialog = ({
 
     return (
         <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
+            <AlertDialogOverlay className="backdrop-blur-xs bg-black/10" />
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
