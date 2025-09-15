@@ -84,7 +84,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
             response.clearCookie('accessToken', {
                 httpOnly: true,
                 sameSite: 'lax',
-                domain: `${this.configService.get<string>('DOMAIN')}`
+                domain: `.${this.configService.get<string>('DOMAIN')}`
             })
         }
 

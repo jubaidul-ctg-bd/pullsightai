@@ -14,7 +14,8 @@ async function bootstrap() {
             'http://localhost:3000',
             'https://dev-web.pullsight.ai',
             'https://pullsight.ai',
-            'https://stage-web.pullsight.ai'
+            'https://stage-web.pullsight.ai',
+            'https://app.pullsight.ai'
         ],
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         preflightContinue: false,

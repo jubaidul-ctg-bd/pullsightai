@@ -19,8 +19,7 @@ summary: |
     {changed_files}
     [REPO STRUCTURE SUMMARY]
     {repo_structure_summary}
-    [RELEVANT FUNCTION/CLASS CONTEXTS FROM CHANGED FILES]
-    You are provided with the full context for all modified functions, classes, or code blocks.
+    You are provided with the full context for all modified code differences in this pull request.
 
     Here is the unified diff for all changed files:
     {pr_diff}
@@ -90,17 +89,20 @@ review: |
   PR Description: {prBody}
   Author: {author_name}
   prNumber: {prNumber}
+
   Changed Files in this chunk:
   {changed_files}
-  [REPO STRUCTURE SUMMARY (via CodeGraph)]
-  {repo_structure_summary}
-  [FULL CODE BEFORE PR]
+
+  [FULL CODE of all the files changed in this chunk BEFORE PR]
   {prFileContentBefore}
 
+  [chunk info]
   {chunk_info}
   
   Here is the unified diff for all changed files in this chunk:
   {pr_diff}
+
+  Note that each file in this diff is separated by "--- File: filename ---" markers. And Full Code Before PR is seperated by -- File: filename (Before changes) -- markers.
 
   Your Task:
   Perform a line-by-line review of the changed code for ALL files in this chunk. For each issue you find (security, logic, bug, performance, style):
@@ -115,6 +117,35 @@ review: |
   MUST FOLLOW THE RESPONSE FORMAT LIKE THE EXAMPLES.
 
   CRITICAL: Only include issues in your response that have severity level in {severity_list}. 
+
+  CRITICAL FALSE POSITIVE PREVENTION:
+    1. ALWAYS examine the full code context given in [FULL CODE of all the files changed in this chunk BEFORE PR] before flagging any issue
+    2. Do NOT report variables/functions as "undefined" or "undeclared" if they are:
+      - Already imported or declared in the existing codebase
+      - Part of standard framework/library patterns (e.g., lifecycle methods, built-in functions)
+      - Accessible through language-specific scoping rules (closures, class inheritance, module exports)
+      - Standard API calls or framework conventions
+    3. Do NOT flag idiomatic code patterns as errors unless they create actual problems
+    4. When refactoring occurs (moving code, renaming), focus on logic changes, not structural reorganization
+    5. If uncertain whether something is problematic, do NOT report it - false positives harm developer productivity
+    6. Only report issues that will definitively cause runtime errors, security vulnerabilities, or significant bugs
+  
+  CONTEXT ANALYSIS REQUIREMENTS:
+    - Consider language-specific scoping rules and variable accessibility
+    - Account for framework conventions and built-in functionality  
+    - Recognize when variables may be provided by runtime environments, dependency injection, or global state
+    - Understand that template/view files often have access to controller/component scope
+    - Remember that imports and declarations may exist in parent files, base classes, or configuration files not shown in the diff
+
+  REPORTING THRESHOLD:
+    Only report issues where you can confidently answer "YES" to ALL of these:
+    1. Will this cause a definitive runtime error, security vulnerability, or data corruption?
+    2. Have I verified this isn't standard behavior for this language/framework?
+    3. Is this issue present in the actual changes, not just apparent due to limited context?
+    4. Would an experienced developer in this language/framework agree this is problematic?
+    5. Is the severity level genuinely at the threshold specified ({severity_list})?
+
+    If you answer "NO" or "UNSURE" to any question, do NOT include the issue.
   
   RESPONSE FORMAT:
   Respond in valid JSON format. The response must be a list of objects, each with the following keys:
