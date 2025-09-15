@@ -7,7 +7,7 @@ import Dropdown from "@/components/reusable/Dropdown";
 import CircularProgress from "@/components/reusable/CircularProgress";
 import { Button } from "@/components/ui/button";
 import { ROUTE_CONSTANTS } from "@/lib/constants";
-import { getRemainingDays } from "@/lib/dayjs";
+import { getRemainingDays, isPlanExpired } from "@/lib/dayjs";
 import showToast from "@/lib/toast";
 import { cn, numToHip } from "@/lib/utils";
 import { useAppStore } from "@/store/appStore";
@@ -133,68 +133,70 @@ const AppTopBar = () => {
                 Welcome back, {user?.displayName || user?.username} 👋
             </span>
 
-            <AdminGuard>
-                {isTrialPlan ? (
-                    <div className="text-sm text-gray-400 bg-yellow-400/20 rounded-xl py-1 xl:py-2 px-3 hidden lg:inline-flex items-center gap-5 ml-auto">
-                        <CircularProgress
-                            value={progressPercentage}
-                            size={48}
-                            strokeWidth={8}
-                            className="flex-shrink-0"
-                        />
-                        <div>
-                            <div className="text-white font-semibold">
-                                {remainingDays} day(s) left in your free trial
-                            </div>
+            {!isPlanExpired(activePlan?.periodEnd || "") &&(
+                <AdminGuard>
+                    {isTrialPlan ? (
+                        <div className="text-sm text-gray-400 bg-yellow-400/20 rounded-xl py-1 xl:py-2 px-3 hidden lg:inline-flex items-center gap-5 ml-auto">
+                            <CircularProgress
+                                value={progressPercentage}
+                                size={48}
+                                strokeWidth={8}
+                                className="flex-shrink-0"
+                            />
                             <div>
-                                {numToHip(
-                                    selectedWorkspace?.planRemainingToken || 0,
-                                    2
-                                )}
-                                /
-                                {numToHip(
-                                    selectedWorkspace?.planTotalToken || 0,
-                                    2
-                                )}{" "}
-                                tokens are left
+                                <div className="text-white font-semibold">
+                                    {remainingDays} day(s) left in your free trial
+                                </div>
+                                <div>
+                                    {numToHip(
+                                        selectedWorkspace?.planRemainingToken || 0,
+                                        2
+                                    )}
+                                    /
+                                    {numToHip(
+                                        selectedWorkspace?.planTotalToken || 0,
+                                        2
+                                    )}{" "}
+                                    tokens are left
+                                </div>
                             </div>
+                            <Link
+                                className="gap-1 flex items-center bg-yellow-400 text-neutral-900 rounded-md px-2 py-1.5 text-sm font-medium ml-10"
+                                href={ROUTE_CONSTANTS.APP_SUBSCRIPTION_PLANS}
+                            >
+                                Upgrade Now
+                                <Rocket className="h-4 w-auto" />
+                            </Link>
                         </div>
-                        <Link
-                            className="gap-1 flex items-center bg-yellow-400 text-neutral-900 rounded-md px-2 py-1.5 text-sm font-medium ml-10"
-                            href={ROUTE_CONSTANTS.APP_SUBSCRIPTION_PLANS}
-                        >
-                            Upgrade Now
-                            <Rocket className="h-4 w-auto" />
-                        </Link>
-                    </div>
-                ) : (
-                    <div className="border mr-auto p-1 md:p-2 rounded-lg">
-                        <p className="hidden xl:block text-xs text-gray-500 mb-0">
-                            Available Tokens
-                        </p>
-                        <p className="text-[14px] lg:text-xl font-bold flex flex-col md:flex-row md:items-end">
-                            <span>
-                                {numToHip(
-                                    (selectedWorkspace?.planRemainingToken ||
-                                        0) +
-                                        (selectedWorkspace?.packRemainingToken ||
-                                            0),
-                                    2
-                                )}{" "}
-                                /{" "}
-                            </span>
-                            <span className="text-muted-foreground text-xs lg:text-sm">
-                                {numToHip(
-                                    (selectedWorkspace?.planTotalToken || 0) +
-                                        (selectedWorkspace?.packTotalToken ||
-                                            0),
-                                    2
-                                )}
-                            </span>
-                        </p>
-                    </div>
-                )}
-            </AdminGuard>
+                    ) :   (
+                        <div className="border mr-auto p-1 md:p-2 rounded-lg">
+                            <p className="hidden xl:block text-xs text-gray-500 mb-0">
+                                Available Tokens
+                            </p>
+                            <p className="text-[14px] lg:text-xl font-bold flex flex-col md:flex-row md:items-end">
+                                <span>
+                                    {numToHip(
+                                        (selectedWorkspace?.planRemainingToken ||
+                                            0) +
+                                            (selectedWorkspace?.packRemainingToken ||
+                                                0),
+                                        2
+                                    )}{" "}
+                                    /{" "}
+                                </span>
+                                <span className="text-muted-foreground text-xs lg:text-sm">
+                                    {numToHip(
+                                        (selectedWorkspace?.planTotalToken || 0) +
+                                            (selectedWorkspace?.packTotalToken ||
+                                                0),
+                                        2
+                                    )}
+                                </span>
+                            </p>
+                        </div>
+                    ) }
+                </AdminGuard>
+            )}
 
             <Dropdown>
                 <Dropdown.Trigger>

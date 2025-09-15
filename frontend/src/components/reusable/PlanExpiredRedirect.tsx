@@ -23,6 +23,7 @@ const PlanExpiredRedirect = () => {
         const currentDate = new Date();
         const periodEnd = new Date(selectedWorkspace.currentPlan.periodEnd);
 
+        console.log({currentDate, periodEnd});
         // Check if plan has expired and is not active
         return currentDate > periodEnd;
     }, [selectedWorkspace]);

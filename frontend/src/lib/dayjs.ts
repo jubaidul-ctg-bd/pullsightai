@@ -31,6 +31,12 @@ export const subtractDays = (
 export const getRemainingDays = (endDate: string | number | Date): number => {
     const now = dayjs();
     const end = dayjs(endDate);
-    const diff = end.diff(now, "day") + 1; // +1 to include the end day
+    const diff = end.diff(now, "day"); // +1 to include the end day
     return diff > 0 ? diff : 0;
 };
+
+export const isPlanExpired = (endDate: string | number | Date): boolean => {
+    const now = dayjs();
+    const end = dayjs(endDate);
+    return now.isAfter(end);
+}

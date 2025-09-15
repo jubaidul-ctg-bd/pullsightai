@@ -48,7 +48,7 @@ export const useGetWorkspaceRepositoriesQuery = ({
     isEnabled?: boolean;
 }) => {
     return useQuery({
-        queryKey: ["repositories", { isActive, page, limit, author }],
+        queryKey: ["repositories"],
         queryFn: ({}) =>
             workspaceEndpoints.getRepositories({
                 isActive,
@@ -67,7 +67,7 @@ export const useUpdateRepositoryMutation = () => {
         mutationFn: workspaceEndpoints.updateRepository,
         onSuccess: () => {
             // Invalidate all queries that start with "repositories"
-            queryClient.refetchQueries({ queryKey: ["repositories"] });
+            queryClient.invalidateQueries({ queryKey: ["repositories"] });
         },
     });
 };
