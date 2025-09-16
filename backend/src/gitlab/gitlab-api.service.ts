@@ -683,8 +683,6 @@ export class GitlabApiService {
         await this.httpService.delete(apiEndpoint, {
             headers: this.getAuthHeaders(accessToken)
         })
-
-        console.log('GitLab webhook removed successfully')
         return {
             message: 'Webhook successfully removed!',
             projectId,

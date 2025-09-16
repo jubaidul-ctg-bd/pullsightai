@@ -440,7 +440,7 @@ export class WorkspaceService {
                 case 'gitlab':
                     await this.gitlabService.removeWebhook(
                         accessToken,
-                        repository.slug,
+                        repository.id,
                         repository.webhookToken
                     )
                     break
