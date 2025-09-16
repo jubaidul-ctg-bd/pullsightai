@@ -11,8 +11,8 @@ def load_prompt():
 def fill_prompt(template: str, variables: dict) -> str:
     return template.format(**variables)
 
-async def generate_summary_response(variables: dict, llm_service, model_name: str) -> PRSummaryResponse:
+async def generate_summary_response(variables: dict, llm_service) -> PRSummaryResponse:
     prompt_yaml = load_prompt()
     prompt = fill_prompt(prompt_yaml['summary'], variables)
-    summary, summary_usage, model_info = await llm_service.generate_pr_summary(prompt, model_name=model_name)
+    summary, summary_usage, model_info = await llm_service.generate_pr_summary(prompt)
     return PRSummaryResponse(prNumber=variables.get('prNumber', "0"), pr_line=1, pr_summary=summary, summary_usage=summary_usage, model_info=model_info) 

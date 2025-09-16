@@ -68,6 +68,7 @@ export const useUpdateRepositoryMutation = () => {
         onSuccess: () => {
             // Invalidate all queries that start with "repositories"
             queryClient.invalidateQueries({ queryKey: ["repositories"] });
+            queryClient.refetchQueries({ queryKey: ["repositories"] });
         },
     });
 };

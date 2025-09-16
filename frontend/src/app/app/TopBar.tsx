@@ -133,7 +133,7 @@ const AppTopBar = () => {
                 Welcome back, {user?.displayName || user?.username} 👋
             </span>
 
-            {!isPlanExpired(activePlan?.periodEnd || "") &&(
+            {!isPlanExpired(activePlan?.periodEnd || "") && activePlan && (
                 <AdminGuard>
                     {isTrialPlan ? (
                         <div className="text-sm text-gray-400 bg-yellow-400/20 rounded-xl py-1 xl:py-2 px-3 hidden lg:inline-flex items-center gap-5 ml-auto">

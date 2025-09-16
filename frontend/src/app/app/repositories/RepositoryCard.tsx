@@ -11,6 +11,7 @@ import { useState } from "react";
 import ConfirmDialog from "@/components/reusable/ConfirmDialog";
 import { useUpdateRepositoryMutation } from "@/api/queries/workspace";
 import RepositorySettingsModal from "./RepositorySettingsModal";
+import showToast from "@/lib/toast";
 
 interface RepositoryCardProps {
     repository: Repository & { isActive?: boolean; updatedOn?: string };
@@ -24,15 +25,14 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
     const isActive = repository.isActive ?? true; // Default to true if not provided
 
     const handleStatusChange = async () => {
-        try {
-            await mutateAsync({
-                id: repository._id,
-                data: { isActive: !isActive },
-            });
+        await mutateAsync({
+            id: repository._id,
+            data: { isActive: !isActive },
+        }).catch((error) => {
+            showToast.error("Failed to update repository status");
+        }).finally(() => {
             setShowConfirm(false);
-        } catch (error) {
-            console.error("Failed to update repository status:", error);
-        }
+        });
     };
 
     return (
