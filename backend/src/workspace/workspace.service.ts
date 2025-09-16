@@ -427,22 +427,26 @@ export class WorkspaceService {
     }
 
     async deleteWebhook(repository: any, accessToken: any) {
-        switch (repository.provider) {
-            case 'bitbucket':
-                await this.bitbucketService.removeWebhook(
-                    accessToken,
-                    repository.workspace.slug,
-                    repository.slug,
-                    repository.webhookToken
-                )
-                break
-            case 'gitlab':
-                await this.gitlabService.removeWebhook(
-                    accessToken,
-                    repository.slug,
-                    repository.webhookToken
-                )
-                break
+        try {
+            switch (repository.provider) {
+                case 'bitbucket':
+                    await this.bitbucketService.removeWebhook(
+                        accessToken,
+                        repository.workspace.slug,
+                        repository.slug,
+                        repository.webhookToken
+                    )
+                    break
+                case 'gitlab':
+                    await this.gitlabService.removeWebhook(
+                        accessToken,
+                        repository.slug,
+                        repository.webhookToken
+                    )
+                    break
+            }
+        } catch (err) {
+            console.log('Error removing webhook:', err)
         }
         await this.dataService.repositories.updateOne(
             { _id: repository._id },
