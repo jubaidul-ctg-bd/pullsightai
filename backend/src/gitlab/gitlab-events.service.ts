@@ -98,7 +98,7 @@ export class GitlabEventsService {
                 prUser: mergeRequest.author?.username || payload.user?.username,
                 prUserAvatar:
                     payload.user?.avatar_url || mergeRequest.author?.avatar_url,
-                prUrl: mergeRequest.web_url || mergeRequest.target.url,
+                prUrl: mergeRequest.url,
                 owner: workspace,
                 repo: project.path_with_namespace,
                 prNumber: mergeRequest.iid.toString(),
