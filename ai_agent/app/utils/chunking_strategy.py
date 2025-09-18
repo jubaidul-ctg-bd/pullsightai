@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import List, Dict, Tuple
 from .token_counter import estimate_tokens_for_file, is_file_too_large
@@ -259,14 +260,15 @@ def prepare_chunk_for_review(chunk: Dict, pr_metadata: Dict) -> Dict:
         Dict: Variables ready for review generation
     """
     changed_files = []
-    pr_diff = ""
+    pr_diff_chunk = ""
     pr_file_content_before = ""
     
     for file_info in chunk["files"]:
+        from .diff_formatter import format_diff_for_llm
+        pr_diff_processed = format_diff_for_llm(file_info["prFileDiffHunks"], file_info["prFileName"])
+        pr_diff_chunk += f"\n\n--- File: {file_info['prFileName']} ---\n{pr_diff_processed}"
         changed_files.append(file_info["prFileName"])
-        pr_diff += f"\n\n--- File: {file_info['prFileName']} ---\n{file_info['prFileDiff']}"
-        
-        # Collect file content before changes if available
+        # # Collect file content before changes if available
         if file_info.get("prFileContentBefore"):
             pr_file_content_before += f"\n\n--- File: {file_info['prFileName']} (Before Changes) ---\n{file_info['prFileContentBefore']}"
 
@@ -282,8 +284,7 @@ def prepare_chunk_for_review(chunk: Dict, pr_metadata: Dict) -> Dict:
         "changed_files": ", ".join(changed_files),
         "repo_structure_summary": pr_metadata.get("repo_structure_summary", ""),
         "prFileContentBefore": pr_file_content_before,
-        "pr_diff": pr_diff,
-        # "minSeverity": pr_metadata.get("minSeverity", "Info"),
+        "pr_diff": pr_diff_chunk,
         "severity_list": str(severity_list),
         "chunk_info": f"Chunk {chunk['chunk_index'] + 1} of multiple chunks"
     } 
