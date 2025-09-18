@@ -450,7 +450,7 @@ export class DashboardService {
         const limit = issueCardFilterDto.limit || 10
         const skip = (page - 1) * limit
 
-        // Use aggregation for optimized query
+        // Use aggregation starting from pullRequestAnalysisComments table
         const aggregationPipeline: any[] = [
             { $match: baseMatch },
             {
@@ -471,6 +471,7 @@ export class DashboardService {
                 }
             },
             { $unwind: '$workspace' },
+            // Apply pullRequest filters BEFORE pagination
             ...(Object.keys(pullRequestMatch).length > 0
                 ? [{ $match: pullRequestMatch }]
                 : []),
@@ -484,7 +485,8 @@ export class DashboardService {
                                         new Date(),
                                         {
                                             $dateFromString: {
-                                                dateString: '$pullRequest.prCreatedAt'
+                                                dateString:
+                                                    '$pullRequest.prCreatedAt'
                                             }
                                         }
                                     ]
@@ -523,12 +525,14 @@ export class DashboardService {
                     }
                 }
             },
+            // Sort BEFORE pagination
+            { $sort: { updatedAt: -1, createdAt: -1 } },
             {
                 $project: {
                     id: '$_id',
                     pr: {
                         $ifNull: [
-                            '$pullRequest.title',
+                            '$pullRequest.prTitle',
                             {
                                 $ifNull: [
                                     {
@@ -556,10 +560,7 @@ export class DashboardService {
                     status: 1,
                     daysOpen: 1,
                     updated: {
-                        $ifNull: [
-                            '$pullRequest.updatedAt',
-                            '$pullRequest.createdAt'
-                        ]
+                        $ifNull: ['$updatedAt', '$createdAt']
                     },
                     repositorySlug: 1,
                     prNumber: '$pullRequest.prNumber',
@@ -573,7 +574,7 @@ export class DashboardService {
                     codeSnippetLineStart: 1
                 }
             },
-            { $sort: { updated: -1 } },
+            // Apply pagination AFTER all filtering and sorting
             { $skip: skip },
             { $limit: limit }
         ]
