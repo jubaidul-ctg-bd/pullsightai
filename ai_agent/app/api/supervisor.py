@@ -126,7 +126,8 @@ def validate_pr_payload(payload: PRPayloadV2) -> tuple[bool, str, dict]:
             "prFiles": pr_files,
             "api_key": api_key,
             "model_name": model_name,
-            "minSeverity": pr.get("minSeverity", "Major")
+            "minSeverity": pr.get("minSeverity", "Major"),
+            "prFileDiffHunks": pr.get("prFileDiffHunks", [])
 
         }
         
@@ -179,7 +180,7 @@ async def process_pr_review_background(extracted_data: dict):
         # Create chunks for summary generation
         chunks, ignored_files = create_summary_chunks(
             files=extracted_data["prFiles"],
-            max_chunk_tokens=150000,  # LLM limit
+            max_chunk_tokens=100000,  # LLM limit
             max_file_tokens=100000    # File size limit
         )
         
@@ -302,7 +303,7 @@ async def process_pr_review_background(extracted_data: dict):
             # Create chunks for review generation
             review_chunks, ignored_review_files = create_review_chunks(
                 files=extracted_data["prFiles"],
-                max_chunk_tokens=150000,  # LLM limit for reviews
+                max_chunk_tokens=30000,  # LLM limit for reviews
                 max_file_tokens=100000    # File size limit
             )
             
