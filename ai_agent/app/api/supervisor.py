@@ -303,7 +303,7 @@ async def process_pr_review_background(extracted_data: dict):
             # Create chunks for review generation
             review_chunks, ignored_review_files = create_review_chunks(
                 files=extracted_data["prFiles"],
-                max_chunk_tokens=30000,  # LLM limit for reviews
+                max_chunk_tokens=100000,  # LLM limit for reviews
                 max_file_tokens=100000    # File size limit
             )
             

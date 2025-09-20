@@ -101,7 +101,7 @@ def parse_review_response(review_text: str, file_name: str):
         issue_text = item.get("issue", "")
         suggestion_text = item.get("suggestion", "")
         if issue_text or suggestion_text:
-            content = f"{severity_text}\n\n\n**Issue**: {issue_text}\n\n**Suggestion**: {suggestion_text}".strip()
+            content = f"## Comment from Pullsight AI: \n\n{severity_text}\n\n\n**Issue**: {issue_text}\n\n**Suggestion**: {suggestion_text}".strip()
         else:
             # Fallback: stringify the whole item
             content = json.dumps(item, ensure_ascii=False)
@@ -234,7 +234,7 @@ def parse_chunked_review_response(review_text: str, chunk_files: List[Dict], min
         issue_text = item.get("issue", "")
         suggestion_text = item.get("suggestion", "")
         if issue_text or suggestion_text:
-            content = f"{severity_text}\n\n\n**Issue**: {issue_text}\n\n**Suggestion**: {suggestion_text}".strip()
+            content = f"## Comment from Pullsight AI: \n\n{severity_text}\n\n\n**Issue**: {issue_text}\n\n**Suggestion**: {suggestion_text}".strip()
         else:
             # Fallback: stringify the whole item
             content = json.dumps(item, ensure_ascii=False)

@@ -531,21 +531,10 @@ export class DashboardService {
                 $project: {
                     id: '$_id',
                     pr: {
-                        $ifNull: [
-                            '$pullRequest.prTitle',
+                        $concat: [
+                            'PR #',
                             {
-                                $ifNull: [
-                                    {
-                                        $concat: [
-                                            'PR #',
-                                            {
-                                                $toString:
-                                                    '$pullRequest.prNumber'
-                                            }
-                                        ]
-                                    },
-                                    'Untitled PR'
-                                ]
+                                $toString: '$pullRequest.prNumber'
                             }
                         ]
                     },
