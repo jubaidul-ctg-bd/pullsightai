@@ -136,7 +136,6 @@ export class GithubController {
 
     @Post('post-pr')
     async postPr(@Body() body: string) {
-        console.log('Post PR body:', body)
         return {
             message: 'Post Pr successfully',
             result: {}

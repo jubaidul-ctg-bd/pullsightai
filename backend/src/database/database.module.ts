@@ -3,15 +3,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { DatabaseService } from 'src/database/database.service'
 import { EventLogSchema } from 'src/database/schemas/event-log.schema'
-import { PackSchema } from 'src/database/schemas/pack.schema'
-import { PlanSchema } from 'src/database/schemas/plan.schema'
 import { PullRequestAnalysisCommentSchema } from 'src/database/schemas/pull-request-analysis-comment.schema'
 import { PullRequestAnalysisSchema } from 'src/database/schemas/pull-request-analysis.schema'
 import { PullRequestSchema } from 'src/database/schemas/pull-request.schema'
-import { PurchasedPackSchema } from 'src/database/schemas/purchasedPack.schema'
-import { PurchasedPlanSchema } from 'src/database/schemas/purchasedPlan.schema'
 import { RepositorySchema } from 'src/database/schemas/repository.schema'
-import { TransactionSchema } from 'src/database/schemas/transaction.schema'
 import { UserSchema } from 'src/database/schemas/user.schema'
 import { WorkspaceMemberSchema } from 'src/database/schemas/workspace-members.schema'
 import { WorkspaceSchema } from 'src/database/schemas/workspace.schema'
@@ -40,18 +35,7 @@ import { WorkspaceSchema } from 'src/database/schemas/workspace.schema'
             { name: 'Repository', schema: RepositorySchema },
             { name: 'EventLog', schema: EventLogSchema },
             { name: 'PullRequest', schema: PullRequestSchema },
-            { name: 'WorkspaceMember', schema: WorkspaceMemberSchema },
-            {
-                name: 'Pack',
-                schema: PackSchema
-            },
-            { name: 'Plan', schema: PlanSchema },
-            { name: 'PurchasedPlan', schema: PurchasedPlanSchema },
-            { name: 'PurchasedPack', schema: PurchasedPackSchema },
-            {
-                name: 'Transaction',
-                schema: TransactionSchema
-            }
+            { name: 'WorkspaceMember', schema: WorkspaceMemberSchema }
         ])
     ],
     controllers: [],

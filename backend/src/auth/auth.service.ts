@@ -24,7 +24,6 @@ export class AuthService {
 
         // Use provider-specific default expiry times since tokens are not JWTs
         const defaultExpiry = {
-            gitlab: 7200, // 2 hours
             bitbucket: 3600, // 1 hour
             github: 28800 // 8 hours (GitHub App tokens)
         }
@@ -35,15 +34,12 @@ export class AuthService {
             providerId: profile.id,
             joinedAt: null
         })
-        if (profile.provider == 'gitlab') {
-            profileUrl = profile.photos?.[0]?.value || profile.avatarUrl
-        } else if (profile.provider == 'bitbucket') {
-            profileUrl = profile._json['links'].avatar.href || profile.photos?.[0]?.value
+        if (profile.provider == 'bitbucket') {
+            profileUrl =
+                profile._json['links'].avatar.href || profile.photos?.[0]?.value
         } else if (profile.provider == 'github') {
             profileUrl = profile.photos?.[0]?.value || profile.avatarUrl
         }
-        console.log('profile-------->', profileUrl)
-        console.log('invitation-------->', profile)
         if (!user) {
             user = await this.dataService.users.create({
                 provider,
@@ -77,7 +73,6 @@ export class AuthService {
             invitation.user = user._id as any
             invitation.save()
             user.workspaces?.push(invitation.workspace)
-            console.log('Invitation accepted, workspace added to user', user)
         }
         await user.save()
         return await this.getProfile(user._id)
@@ -99,21 +94,7 @@ export class AuthService {
             })
             .populate([
                 {
-                    path: 'currentWorkspace',
-                    populate: [
-                        {
-                            path: 'currentPlan',
-                            populate: {
-                                path: 'plan'
-                            }
-                        },
-                        {
-                            path: 'currentPack',
-                            populate: {
-                                path: 'pack'
-                            }
-                        }
-                    ]
+                    path: 'currentWorkspace'
                 },
                 {
                     path: 'workspaces'

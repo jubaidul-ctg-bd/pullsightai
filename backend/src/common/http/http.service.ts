@@ -63,7 +63,6 @@ export class HttpService {
     ): Promise<T> {
         const res$ = this.http.post<T>(url, data, config).pipe(
             catchError((error: AxiosError) => {
-                console.log('Error in HTTP POST:====', error)
                 this.convertAxiosError(error)
                 return throwError(() => error)
             })

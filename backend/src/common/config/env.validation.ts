@@ -31,12 +31,6 @@ class EnvironmentVariables {
     BASE_URL: string
 
     @IsString()
-    GITLAB_CLIENT_ID: string
-
-    @IsString()
-    GITLAB_CLIENT_SECRET: string
-
-    @IsString()
     BITBUCKET_CLIENT_ID: string
 
     @IsString()
@@ -65,9 +59,6 @@ class EnvironmentVariables {
 
     @IsString()
     DOMAIN: string
-
-    @IsString()
-    STRIPE_SECRET_KEY: string
 }
 
 export function validate(config: Record<string, unknown>) {

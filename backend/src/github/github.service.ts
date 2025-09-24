@@ -520,8 +520,6 @@ export class GithubService {
     }
 
     async processGithubEvent(event: any, payload: any) {
-        console.log('event name', event)
-        console.log('payload', payload)
         let isApplicable
         let pullRequestFormattedData: StructuredPRData | boolean
         let prEvent

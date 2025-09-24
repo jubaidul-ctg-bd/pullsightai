@@ -1,20 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Types } from 'mongoose'
 import { PullRequestAnalysisCommentsDto } from 'src/analysis/dto/post-analysis-comments.dto'
 import { PullRequestAnalysisDto } from 'src/analysis/dto/post-analysis.dto'
 import { BitbucketEventsService } from 'src/bitbucket/bitbucket-events.service'
 import { PREvent } from 'src/common/enums/pr.enum'
-import { getTimePeriod } from 'src/common/helpers/coversion.helper'
 import { HttpService } from 'src/common/http/http.service'
 import { StructuredPRData } from 'src/common/interfaces/pr.interface'
 import { DatabaseService } from 'src/database/database.service'
-import { PaymentStatus } from 'src/database/enums/status.enum'
-import { BillingCycle } from 'src/database/schemas/plan.schema'
 import { Status } from 'src/database/schemas/pull-request-analysis.schema'
 import { PRReviewDto } from 'src/github/dto/install-repo.dto'
 import { GithubEventService } from 'src/github/github-events.service'
-import { GitlabEventsService } from 'src/gitlab/gitlab-events.service'
 
 @Injectable()
 export class AnalysisService {
@@ -22,7 +18,6 @@ export class AnalysisService {
         private readonly dataService: DatabaseService,
         private readonly githubEventService: GithubEventService,
         private readonly bitbucketEventsService: BitbucketEventsService,
-        private readonly gitlabEventsService: GitlabEventsService,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService
     ) {}
@@ -43,16 +38,6 @@ export class AnalysisService {
         provider: string,
         providerId: string
     ) {
-        console.log(
-            'Checking if analysis is applicable for repository:',
-            repositorySlug,
-            'in workspace:',
-            workspaceSlug,
-            'with provider:',
-            provider,
-            'and providerId:',
-            providerId
-        )
         const repository = await this.dataService.repositories
             .findOne({
                 slug: repositorySlug,
@@ -62,7 +47,6 @@ export class AnalysisService {
             })
             .populate('workspace')
         if (!repository) {
-            console.log('Repository not found or inactive')
             return false
         }
         const workspaceMember = await this.dataService.workspaceMembers.findOne(
@@ -74,138 +58,12 @@ export class AnalysisService {
             }
         )
         if (!workspaceMember) {
-            console.log(
-                'No active workspace member found for providerId:',
-                providerId
-            )
-            return false
-        }
-        if (!(await this.checkAvailableToken(repository.workspace!['_id']))) {
             return false
         }
         return {
             repository,
             workspaceMember
         }
-    }
-
-    async checkAvailableToken(workspaceId: any) {
-        const workspace: any = await this.dataService.workspaces
-            .findOne({
-                _id: workspaceId
-            })
-            .populate('currentPlan currentPack')
-
-        let flag = true
-        if (
-            workspace?.currentPlan?.periodEnd &&
-            new Date() > new Date(workspace.currentPlan.periodEnd)
-        ) {
-            if (
-                workspace.currentPlan.isFree &&
-                workspace.currentPlan.billingCycle == BillingCycle.MONTHLY
-            ) {
-                workspace.planRemainingToken = await this.assignPlanToWorkspace(
-                    workspaceId,
-                    workspace.currentPlan.numOfSeat,
-                    workspace.currentPlan.plan
-                )
-            } else {
-                flag = false
-            }
-        }
-
-        if (
-            flag &&
-            (workspace?.planRemainingToken > 0 ||
-                workspace?.packRemainingToken > 0)
-        ) {
-            return true
-        } else {
-            return false
-        }
-    }
-
-    async assignPlanToWorkspace(
-        workspaceId: any,
-        noOfSeat: number,
-        planId: string
-    ) {
-        const planData = await this.dataService.plans.findOne({
-            _id: planId
-        })
-        if (!planData) {
-            throw new NotFoundException('No free plan found')
-        }
-        let totalToken = planData.tokenLimitPerDev * noOfSeat
-        let remainingToken = totalToken
-        const period = getTimePeriod(planData.billingCycle)
-        const purchasedPlan = await this.dataService.purchasedPlans.create({
-            workspace: workspaceId,
-            plan: planData._id,
-            amount: 0,
-            totalToken: totalToken,
-            numOfSeat: noOfSeat,
-            billingCycle: planData.billingCycle,
-            periodStart: period.periodStart,
-            periodEnd: period.periodEnd,
-            paymentStatus: PaymentStatus.PAID,
-            status: 'active',
-            title: planData.title,
-            pricePerDev: planData.pricePerDev,
-            tokenLimitPerDev: planData.tokenLimitPerDev,
-            isFree: planData.isFree,
-            isDefault: planData.isDefault
-        })
-        await this.dataService.workspaces.updateOne(
-            { _id: workspaceId },
-            {
-                $set: {
-                    currentPlan: purchasedPlan._id,
-                    planTotalToken: totalToken,
-                    planRemainingToken: remainingToken
-                }
-            }
-        )
-        return remainingToken
-    }
-
-    async updateTokenUsage(workspaceId: any, tokenUsage: number) {
-        const workspace: any = await this.dataService.workspaces
-            .findOne({
-                _id: workspaceId
-            })
-            .populate('currentPlan currentPack')
-
-        let remainingTokenUsage = tokenUsage
-
-        // First, try to deduct from currentPlan if available
-        if (workspace?.planRemainingToken && remainingTokenUsage > 0) {
-            const planTokensToDeduct = Math.min(
-                workspace.planRemainingToken,
-                remainingTokenUsage
-            )
-            workspace.planRemainingToken = Math.max(
-                0,
-                workspace.planRemainingToken - planTokensToDeduct
-            )
-            remainingTokenUsage -= planTokensToDeduct
-        }
-
-        // Then, deduct remaining tokens from currentPack if available
-        if (workspace?.packRemainingToken && remainingTokenUsage > 0) {
-            const packTokensToDeduct = Math.min(
-                workspace.packRemainingToken,
-                remainingTokenUsage
-            )
-            workspace.packRemainingToken = Math.max(
-                0,
-                workspace.packRemainingToken - packTokensToDeduct
-            )
-            remainingTokenUsage -= packTokensToDeduct
-        }
-        await workspace.save()
-        return tokenUsage - remainingTokenUsage
     }
 
     async getAndSavePullRequestFormattedData(
@@ -226,8 +84,6 @@ export class AnalysisService {
                 })
                 return pullRequest?.toObject()
             }
-            console.log('existing pr', existingPR)
-            console.log('newPR', newPR)
             const prFiles = newPR.prFiles
                 .map((file) => {
                     if (!existingPR?.prFiles) return file // If no existing files, include all new files
@@ -286,8 +142,6 @@ export class AnalysisService {
     }
 
     async updatedPRState(query: any, data: any) {
-        console.log('Updating PR state with data:', data)
-        console.log('For PR with query:', query)
         return await this.dataService.pullRequests.updateOne(query, {
             $set: data
         })
@@ -299,7 +153,6 @@ export class AnalysisService {
         workspace: any,
         repository?: any
     ) {
-        console.log('Making analysis for PR event:', event)
         const savedPullRequestFormattedData =
             await this.getAndSavePullRequestFormattedData(
                 pullRequestFormattedData,
@@ -330,7 +183,6 @@ export class AnalysisService {
                 }
             }
         )
-        console.log('Created pullRequestAnalysis:', pullRequestAnalysis)
         try {
             const requestBody = {
                 pullRequest: {
@@ -343,14 +195,7 @@ export class AnalysisService {
                     ignore: repository?.ignore
                 }
             }
-            console.log(
-                'Sending data to AI agent:',
-                this.configService.get('AI_AGENT_PR_POST_URL'),
-                requestBody
-            )
-            requestBody?.pullRequest?.prFiles?.map((file) => {
-                console.log('PR File:', file.prFileName, file.prFileDiffHunks)
-            })
+
             await this.httpService.post(
                 this.configService.get('AI_AGENT_PR_POST_URL') as string,
                 requestBody,
@@ -385,11 +230,6 @@ export class AnalysisService {
                     },
                     { new: true }
                 )
-            await this.updateTokenUsage(
-                analysis.workspace,
-                postReviewDto.usageInfo.input_tokens +
-                    postReviewDto.usageInfo.output_tokens || 0
-            )
         } else {
             analysis = await this.dataService.pullRequestAnalysis.findOne({
                 _id: postReviewDto.pullRequestAnalysisId
@@ -427,12 +267,6 @@ export class AnalysisService {
                 break
             case 'bitbucket':
                 await this.bitbucketEventsService.addPRReviewComments(
-                    analysis,
-                    createdComments
-                )
-                break
-            case 'gitlab':
-                await this.gitlabEventsService.addPRReviewComments(
                     analysis,
                     createdComments
                 )
@@ -494,18 +328,10 @@ export class AnalysisService {
                 case 'bitbucket':
                     await this.bitbucketEventsService.addPRSummery(analysis)
                     break
-                case 'gitlab':
-                    await this.gitlabEventsService.addPRSummery(analysis)
-                    break
                 default:
                     throw new Error('Unsupported provider')
             }
         }
-        await this.updateTokenUsage(
-            analysis.workspace,
-            postSummery.usageInfo.input_tokens +
-                postSummery.usageInfo.output_tokens || 0
-        )
         return {}
     }
 

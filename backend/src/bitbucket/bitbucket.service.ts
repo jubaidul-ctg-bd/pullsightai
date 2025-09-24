@@ -176,7 +176,6 @@ export class BitbucketService {
 
     async addWebhook(userData: any, repository: RepositoryDto): Promise<any> {
         const webhookUrl = `${this.configService.get('BASE_URL')}/v1/bitbucket/events`
-        console.log('webhookUrl', webhookUrl)
         const events = [
             'repo:push',
             'pullrequest:created',
@@ -196,7 +195,6 @@ export class BitbucketService {
             webhookUrl,
             events
         )
-        console.log('webhook response', response)
         return {
             ...repository,
             webhookToken: response.webhook.id
@@ -223,8 +221,6 @@ export class BitbucketService {
     }
 
     async processBitbucketEvent(event: any, payload: any) {
-        console.log('event name', event)
-        console.log('payload', payload)
         let isApplicable
         let pullRequestFormattedData: StructuredPRData | boolean
         let prEvent

@@ -1,18 +1,10 @@
-import {
-    BadRequestException,
-    Injectable,
-    NotFoundException
-} from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { AnalysisService } from 'src/analysis/analysis.service'
 import { BitbucketService } from 'src/bitbucket/bitbucket.service'
 import { PaginateDto } from 'src/common/dto/paginate.dto'
-import { getTimePeriod } from 'src/common/helpers/coversion.helper'
 import { DatabaseService } from 'src/database/database.service'
-import { PaymentStatus } from 'src/database/enums/status.enum'
-import { Status } from 'src/database/schemas/purchasedPlan.schema'
 import { MemberRole } from 'src/database/schemas/workspace-members.schema'
-import { GitlabService } from 'src/gitlab/gitlab.service'
 import { CreateAndUpdateWorkspaceSettingsDto } from 'src/workspace/dto/create-update-workspace-settings.dto'
 import { MakeSubscriptionDto } from 'src/workspace/dto/make-subscription.dto'
 import { UpdateMemberDto } from 'src/workspace/dto/update-member.dto'
@@ -28,7 +20,6 @@ export class WorkspaceService {
         private readonly dataService: DatabaseService,
         private readonly configService: ConfigService,
         private readonly analysisService: AnalysisService,
-        private readonly gitlabService: GitlabService,
         private readonly bitbucketService: BitbucketService
     ) {}
 
@@ -97,12 +88,6 @@ export class WorkspaceService {
             case 'github':
                 repositoryData = repository
                 break
-            case 'gitlab':
-                repositoryData = await this.gitlabService.addWebhook(
-                    userData,
-                    repository
-                )
-                break
             case 'bitbucket':
                 repositoryData = await this.bitbucketService.addWebhook(
                     userData,
@@ -169,11 +154,6 @@ export class WorkspaceService {
                     provider: userData.provider,
                     workspace: userData?.currentWorkspace!._id
                 })
-                console.log(
-                    'userData.providerId == member.providerId',
-                    userData.providerId,
-                    member.providerId
-                )
                 if (!user) {
                     await this.dataService.workspaceMembers.create({
                         providerId: member.providerId,
@@ -216,54 +196,7 @@ export class WorkspaceService {
         userData.currentWorkspace.noOfActiveMembers =
             makeSubscriptionDto.members.length
         await userData.currentWorkspace.save()
-
-        if (!userData?.currentWorkspace?.currentPlan) {
-            await this.assignFreePlanToWorkspace(
-                userData,
-                makeSubscriptionDto.members.length
-            )
-        }
         return {}
-    }
-
-    async assignFreePlanToWorkspace(userData: any, noOfSeat: number) {
-        const planData = await this.dataService.plans.findOne({
-            isFree: true,
-            isDefault: true
-        })
-        if (!planData) {
-            throw new NotFoundException('No free plan found')
-        }
-        let totalToken = planData.tokenLimitPerDev * noOfSeat
-        const period = getTimePeriod(planData.billingCycle)
-        const purchasedPlan = await this.dataService.purchasedPlans.create({
-            workspace: userData?.currentWorkspace?._id,
-            plan: planData._id,
-            amount: 0,
-            totalToken: totalToken,
-            numOfSeat: noOfSeat,
-            billingCycle: planData.billingCycle,
-            periodStart: period.periodStart,
-            periodEnd: period.periodEnd,
-            paymentStatus: PaymentStatus.PAID,
-            status: Status.ACTIVE,
-            title: planData.title,
-            pricePerDev: planData.pricePerDev,
-            tokenLimitPerDev: planData.tokenLimitPerDev,
-            isFree: planData.isFree,
-            isDefault: planData.isDefault
-        })
-        await this.dataService.workspaces.updateOne(
-            { _id: userData?.currentWorkspace?._id },
-            {
-                $set: {
-                    currentPlan: purchasedPlan._id,
-                    planTotalToken: totalToken,
-                    planRemainingToken: totalToken
-                }
-            }
-        )
-        return purchasedPlan
     }
 
     async addMembers(createMembersDto: CreateMembersDto, user: any) {
@@ -434,13 +367,6 @@ export class WorkspaceService {
                         accessToken,
                         repository.workspace.slug,
                         repository.slug,
-                        repository.webhookToken
-                    )
-                    break
-                case 'gitlab':
-                    await this.gitlabService.removeWebhook(
-                        accessToken,
-                        repository.id,
                         repository.webhookToken
                     )
                     break

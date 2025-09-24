@@ -5,8 +5,6 @@ import {
     EventLog,
     EventLogDocument
 } from 'src/database/schemas/event-log.schema'
-import { Pack, PackDocument } from 'src/database/schemas/pack.schema'
-import { Plan, PlanDocument } from 'src/database/schemas/plan.schema'
 import {
     PullRequestAnalysisComment,
     PullRequestAnalysisCommentDocument
@@ -20,21 +18,9 @@ import {
     PullRequestDocument
 } from 'src/database/schemas/pull-request.schema'
 import {
-    PurchasedPack,
-    PurchasedPackDocument
-} from 'src/database/schemas/purchasedPack.schema'
-import {
-    PurchasedPlan,
-    PurchasedPlanDocument
-} from 'src/database/schemas/purchasedPlan.schema'
-import {
     Repository,
     RepositoryDocument
 } from 'src/database/schemas/repository.schema'
-import {
-    Transaction,
-    TransactionDocument
-} from 'src/database/schemas/transaction.schema'
 import {
     WorkspaceMember,
     WorkspaceMemberDocument
@@ -55,11 +41,6 @@ export class DatabaseService {
     eventLogs: PaginateModel<EventLogDocument>
     pullRequests: PaginateModel<PullRequestDocument>
     workspaceMembers: PaginateModel<WorkspaceMemberDocument>
-    plans: PaginateModel<PlanDocument>
-    packs: PaginateModel<PackDocument>
-    purchasedPlans: PaginateModel<PurchasedPlanDocument>
-    purchasedPacks: PaginateModel<PurchasedPackDocument>
-    transactions: PaginateModel<TransactionDocument>
     constructor(
         @InjectModel(User.name)
         private UserRepository: PaginateModel<UserDocument>,
@@ -76,17 +57,7 @@ export class DatabaseService {
         @InjectModel(PullRequest.name)
         private PullRequestRepository: PaginateModel<PullRequestDocument>,
         @InjectModel(WorkspaceMember.name)
-        private TeamMemberRepository: PaginateModel<WorkspaceMemberDocument>,
-        @InjectModel(Plan.name)
-        private PlanRepository: PaginateModel<PlanDocument>,
-        @InjectModel(Pack.name)
-        private PackRepository: PaginateModel<PackDocument>,
-        @InjectModel(PurchasedPlan.name)
-        private PurchasedPlanRepository: PaginateModel<PurchasedPlanDocument>,
-        @InjectModel(PurchasedPack.name)
-        private PurchasedPackRepository: PaginateModel<PurchasedPackDocument>,
-        @InjectModel(Transaction.name)
-        private TransactionRepository: PaginateModel<TransactionDocument>
+        private TeamMemberRepository: PaginateModel<WorkspaceMemberDocument>
     ) {}
     onApplicationBootstrap() {
         this.users = this.UserRepository
@@ -98,10 +69,5 @@ export class DatabaseService {
         this.eventLogs = this.EventLogRepository
         this.pullRequests = this.PullRequestRepository
         this.workspaceMembers = this.TeamMemberRepository
-        this.plans = this.PlanRepository
-        this.packs = this.PackRepository
-        this.purchasedPlans = this.PurchasedPlanRepository
-        this.purchasedPacks = this.PurchasedPackRepository
-        this.transactions = this.TransactionRepository
     }
 }

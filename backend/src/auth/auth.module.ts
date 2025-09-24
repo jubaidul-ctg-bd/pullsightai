@@ -7,7 +7,6 @@ import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 import { BitbucketStrategy } from './strategies/bitbucket.strategy'
 import { GithubStrategy } from './strategies/github.strategy'
-import { GitlabStrategy } from './strategies/gitlab.strategy'
 import { JwtCookieStrategy } from './strategies/jwt-cookie.strategy'
 
 @Module({
@@ -29,7 +28,6 @@ import { JwtCookieStrategy } from './strategies/jwt-cookie.strategy'
         AuthService,
         GithubStrategy,
         BitbucketStrategy,
-        GitlabStrategy,
         JwtCookieStrategy
     ]
 })

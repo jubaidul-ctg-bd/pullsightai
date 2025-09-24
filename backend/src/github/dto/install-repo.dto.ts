@@ -28,20 +28,6 @@ export class GetPRDto {
     limit: string
 }
 
-export class GetPRGitLabDto {
-    @IsString()
-    @IsNotEmpty()
-    repo: string
-
-    @IsString()
-    @IsOptional()
-    status: string = 'opened'
-
-    @IsString()
-    @IsOptional()
-    limit: string
-}
-
 export class PRReviewDto {
     @IsString()
     @IsNotEmpty()

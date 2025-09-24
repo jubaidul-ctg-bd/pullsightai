@@ -10,13 +10,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule)
 
     const options = {
-        origin: [
-            'http://localhost:3000',
-            'https://dev-web.pullsight.ai',
-            'https://pullsight.ai',
-            'https://stage-web.pullsight.ai',
-            'https://app.pullsight.ai'
-        ],
+        origin: ['http://localhost:3000'],
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         preflightContinue: false,
         optionsSuccessStatus: 204,
@@ -51,42 +45,5 @@ async function bootstrap() {
     server.timeout = 600000 // 10 minutes in milliseconds
     server.keepAliveTimeout = 65000 // Keep alive timeout (recommended to be longer than load balancer timeout)
     server.headersTimeout = 66000 // Headers timeout (should be longer than keepAliveTimeout)    // Graceful shutdown handlers
-    const gracefulShutdown = (signal: string) => {
-        console.log(`Received ${signal}. Starting graceful shutdown...`)
-
-        server.close((err) => {
-            if (err) {
-                console.error('Error during server close:', err)
-                process.exit(1)
-            }
-            console.log('HTTP server closed.')
-
-            // Close the NestJS application
-            app.close()
-                .then(() => {
-                    console.log('NestJS application closed.')
-                    process.exit(0)
-                })
-                .catch((error) => {
-                    console.error('Error during NestJS app close:', error)
-                    process.exit(1)
-                })
-        })
-
-        // Force shutdown after 10 minutes if graceful shutdown doesn't complete
-        setTimeout(() => {
-            console.error(
-                'Graceful shutdown timeout reached. Forcing shutdown...'
-            )
-            process.exit(1)
-        }, 600000) // 10 minutes
-    }
-
-    // Listen for shutdown signals
-    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'))
-    process.on('SIGINT', () => gracefulShutdown('SIGINT'))
-
-    console.log(`Application is running on port ${process.env.PORT ?? 3000}`)
-    console.log('Graceful shutdown enabled with 10-minute timeout')
 }
 bootstrap()

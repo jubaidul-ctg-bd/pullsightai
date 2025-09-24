@@ -69,19 +69,6 @@ export class AuthController {
         }
     }
 
-    @Get('gitlab')
-    @UseGuards(AuthGuard('gitlab'))
-    gitlabLogin() {}
-
-    @Get('gitlab/callback')
-    @UseGuards(AuthGuard('gitlab'))
-    gitlabCallback(@Req() req, @Res() res: Response) {
-        return {
-            redirect: this.clientUrl,
-            token: this.authService.generateJwt(req.user)
-        }
-    }
-
     @UseGuards(AuthGuard('jwt-cookie'))
     @Get('profile')
     async getProfile(@Req() req) {

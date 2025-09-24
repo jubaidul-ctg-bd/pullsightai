@@ -27,8 +27,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
         const path = httpAdapter.getRequestUrl(ctx.getRequest())
         const response = ctx.getResponse()
 
-        console.log('custom-exception========', exception)
-
         if (exception instanceof mongoose.Error.ValidationError) {
             responseBody = {
                 statusCode: HttpStatus.BAD_REQUEST,

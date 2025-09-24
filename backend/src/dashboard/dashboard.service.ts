@@ -250,26 +250,6 @@ export class DashboardService {
         // Adjust toDate to include the entire day
         fromDate.setUTCHours(23, 59, 59, 999)
 
-        const userTotalSpent = await this.dataService.transactions.aggregate([
-            {
-                $match: {
-                    workspace: findWorkspace._id,
-                    paymentStatus: 'paid',
-                    createdAt: {
-                        $gte: fromDate,
-                        $lte: toDate
-                    }
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    totalAmount: { $sum: '$amount' }
-                }
-            }
-        ])
-        const totalCost = userTotalSpent?.[0]?.totalAmount || 0
-
         // Build match criteria for pull request analysis
         const analysisMatch: any = {
             workspaceSlug: findWorkspace.slug,
@@ -350,20 +330,13 @@ export class DashboardService {
             breakdown
         )
 
-        // Calculate ROI properly with error handling
-        let roi = 0
-        if (totalCost > 0) {
-            roi = totalMoneySaved / totalCost
-        }
-
         return {
             graphChart,
             totalTimeSaved: totalTimeSaved.toFixed(2), // Hours, rounded to 2 decimal places
             totalMoneySaved: totalMoneySaved.toFixed(2), // Currency, rounded to 2 decimal places
             averageTimePerPR: 0, // Hours, rounded to 2 decimal places
             totalLinesReviewed,
-            totalPRsAnalyzed: 0,
-            ROI: `${roi.toFixed(2)}`
+            totalPRsAnalyzed: 0
         }
     }
 
